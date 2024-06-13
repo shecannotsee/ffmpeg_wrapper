@@ -8,7 +8,7 @@ file(GLOB_RECURSE TEST_SRC "${CMAKE_SOURCE_DIR}/test/*")
 # list(REMOVE_ITEM TEST_SRC "${CMAKE_SOURCE_DIR}/test/base.cpp")
 
 # test dependency
-set(test_dependency "-pthread" )
+set(test_dependency "-pthread" ${ffmpeg_lib_list})
 
 # test target
 if (generate_test STREQUAL "ON")

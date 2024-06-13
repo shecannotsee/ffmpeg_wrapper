@@ -9,7 +9,7 @@ file(GLOB_RECURSE SRC "${CMAKE_SOURCE_DIR}/src/*")
 # list(REMOVE_ITEM SRC "${CMAKE_SOURCE_DIR}/src/base64.cpp")
 
 # src dependency
-set(src_dependency "-pthread")
+set(src_dependency "-pthread" ${ffmpeg_lib_list})
 
 # src build to lib
 if (generate_lib STREQUAL "ON")
