@@ -17,16 +17,13 @@ set(ffmpeg_lib_list -Wl,--start-group
 
 
 # include
-include_directories(${ffmpeg_include})
-include_directories(${ffmpeg_include})
+include_directories(${ffmpeg_include}) # ffmpeg
+include_directories(${CMAKE_SOURCE_DIR}/third_party/she_test/include) # she_test
+include_directories(${CMAKE_SOURCE_DIR}/third_party/gsl_4_0_0) # gsl
+
 # lib
 link_directories(${ffmpeg_lib_dir})
 
-
-# include
-include_directories(${CMAKE_SOURCE_DIR}/third_party/she_test/include)
-
-# lib
 
 # Internal project
 include_directories(${CMAKE_SOURCE_DIR}/src)
