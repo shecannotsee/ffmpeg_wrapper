@@ -30,13 +30,13 @@ SHE_TEST(tt, tt) {
   AVFormatContext* formatCtx = nullptr;
   if (avformat_open_input(&formatCtx, rtspUrl, nullptr, nullptr) != 0) {
     std::cerr << "Could not open input stream." << std::endl;
-    return -1;
+    return false;
   }
 
   if (avformat_find_stream_info(formatCtx, nullptr) < 0) {
     std::cerr << "Could not find stream information." << std::endl;
     avformat_close_input(&formatCtx);
-    return -1;
+    return false;
   }
 
   av_dump_format(formatCtx, 0, rtspUrl, 0);
@@ -52,7 +52,7 @@ SHE_TEST(tt, tt) {
   if (videoStreamIndex == -1) {
     std::cerr << "Could not find video stream." << std::endl;
     avformat_close_input(&formatCtx);
-    return -1;
+    return false;
   }
 
   AVCodecParameters* codecPar = formatCtx->streams[videoStreamIndex]->codecpar;
@@ -60,28 +60,28 @@ SHE_TEST(tt, tt) {
   if (!codec) {
     std::cerr << "Unsupported codec!" << std::endl;
     avformat_close_input(&formatCtx);
-    return -1;
+    return false;
   }
 
   AVCodecContext* codecCtx = avcodec_alloc_context3(codec);
   if (!codecCtx) {
     std::cerr << "Could not allocate video codec context." << std::endl;
     avformat_close_input(&formatCtx);
-    return -1;
+    return false;
   }
 
   if (avcodec_parameters_to_context(codecCtx, codecPar) < 0) {
     std::cerr << "Could not copy codec context." << std::endl;
     avcodec_free_context(&codecCtx);
     avformat_close_input(&formatCtx);
-    return -1;
+    return false;
   }
 
   if (avcodec_open2(codecCtx, codec, nullptr) < 0) {
     std::cerr << "Could not open codec." << std::endl;
     avcodec_free_context(&codecCtx);
     avformat_close_input(&formatCtx);
-    return -1;
+    return false;
   }
 
   AVPacket packet;
