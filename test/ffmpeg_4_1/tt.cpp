@@ -105,6 +105,11 @@ SHE_TEST(tt, tt) {
           av_packet_unref(&packet);
           break;
         }
+
+        // Write the SPS and PPS to the new file
+        for (int i = 0; i < codecCtx->extradata_size; i++) {
+          outFile.write(reinterpret_cast<char*>(&codecCtx->extradata[i]), 1);
+        }
       }
 
       if (outFile.is_open()) {
