@@ -6,8 +6,7 @@ extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 }
-#include <frame_info.h>
-#include <packet_info.h>
+
 #include <test_support.h>
 
 #include <deque>
