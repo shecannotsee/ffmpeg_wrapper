@@ -100,7 +100,7 @@ SHE_TEST(ffmpeg_4_1, sample_decode_video) {
   auto f_release = gsl::finally([&]() { fclose(f); });
   /* check */ {
     if (!f) {
-      fprintf(stderr, "Could not open %s\n", filename);
+      fprintf(stderr, "Could not open %s\n", filename.c_str());
       exit(1);
     }
   }
