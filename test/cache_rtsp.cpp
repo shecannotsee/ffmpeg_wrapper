@@ -1,5 +1,6 @@
 #include <she_test.h>
 
+#include "decode.h"
 #include "rtsp_buffer.h"
 #include "test_support.h"
 
@@ -28,11 +29,15 @@ SHE_TEST(test, cache_rtsp) {
     }
     // 写入数据
     outfile.write(reinterpret_cast<const char*>(gop.extradata.data()), gop.extradata.size());
-    for (auto single_frame : gop.frame) {
+    for (auto single_frame : gop.packet) {
       outfile.write(reinterpret_cast<const char*>(single_frame.pkg_data.data()), single_frame.pkg_data.size());
     }
 
-    outfile.close();    //关闭文件
+    outfile.close();  // 关闭文件
+  }
+
+  for (auto gop : bufffer) {
+    decode_gop(gop, output_dir);
   }
 
   return true;

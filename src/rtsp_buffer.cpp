@@ -83,11 +83,12 @@ void rtsp_buffer::buffer_rtsp_stream(std::string rtsp_url) {
 
     if (!gop_segments_.empty()) {
       // 构造一个帧信息
-      frame_info temp;
+      av_packet_info temp;
       temp.pkg_data = bytes(packet.data, packet.data + packet.size);
       temp.pts      = packet.pts;
+      temp.dts      = packet.dts;
       // 将一个帧信息添加到gop中
-      gop_segments_.back().frame.emplace_back(temp);
+      gop_segments_.back().packet.emplace_back(temp);
     }
 
     av_packet_unref(&packet);
