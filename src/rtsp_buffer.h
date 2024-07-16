@@ -20,7 +20,7 @@ class rtsp_buffer {
   ~rtsp_buffer();
 
  private:
-  std::deque<gop_segment> gop_segments_{};  ///< 缓存的数据实体
+  std::vector<gop_segment> gop_segments_{};  ///< 缓存的数据实体
 
   std::mutex buffer_mutex_{};              ///< buffer锁
   std::thread buffering_thread_{};         ///< 缓存线程
