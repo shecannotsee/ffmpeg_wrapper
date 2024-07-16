@@ -53,7 +53,6 @@ void decode(AVCodecContext* dec_ctx, AVFrame* frame, AVPacket* pkt, const std::s
 }  // namespace
 
 SHE_TEST(ffmpeg_4_1, sample_decode_video) {
-  return false;
   const std::string filename   = "../resource/KTMR2R.h264";
   const std::string output_dir = "./decode_video";
   test_support::create_dir(output_dir);

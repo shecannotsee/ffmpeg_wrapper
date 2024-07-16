@@ -207,17 +207,15 @@ SHE_TEST(crop_video_stream, method_1) {
     av_packet_unref(packet);
   }
 
-  std::cout << "decode done!"<< std::endl;
+  std::cout << "decode done!" << std::endl;
   // TODO:只存储了数据，没有存储pts和dts，为了兼容性需要用结构体包这俩数据
   for (int gp_index = 1; gp_index < GOP_lists.size(); gp_index++) {
     for (int pkg_index = 0; pkg_index < GOP_lists[gp_index].size(); pkg_index++) {
       AVPacket* pkg = reinterpret_cast<AVPacket*>(GOP_lists[gp_index][pkg_index].data());
       std::cout << "pts:" << pkg->pts << ",dts:" << pkg->dts << std::endl;
-
     }
   }
-  std::cout << "test done!start write"<< std::endl;
-
+  std::cout << "test done!start write" << std::endl;
 
   auto writeGopListToFile = [](const std::vector<packet_data>& gop_list, const std::string& filename) {
     std::ofstream outfile(filename, std::ios::binary);
