@@ -3,23 +3,36 @@
 # Import lib                                                                                                           #
 ########################################################################################################################
 
-# ffmpeg4.1
-set(lib_path "/home/shecannotsee/Desktop/libraries")
-set(ffmpeg_include ${lib_path}/ffmpeg_4.1/include)
-set(ffmpeg_lib_dir ${lib_path}/ffmpeg_4.1/lib)
-set(ffmpeg_lib_list -Wl,--start-group
-        avcodec avfilter avformat avutil avdevice swresample swscale jpeg
-        -Wl,--end-group
-        z
-        x264
-        x265
-        lzma)
+########################################################################################################################
+# import ffmpeg
+set(_ffmpeg_path "/home/shecannotsee/Desktop/sheer_third_party/libraries/ffmpeg")
+set(ffmpeg_include_dir "${_ffmpeg_path}/include")
+set(ffmpeg_lib_dir "${_ffmpeg_path}/lib")
+set(ffmpeg_link_libs avcodec avdevice avfilter avformat avutil postproc swresample swscale)
+########################################################################################################################
+
+########################################################################################################################
+# import she_test
+set(_she_test_path "/home/shecannotsee/Desktop/sheer_third_party/libraries/she_test")
+set(she_test_include_dir "${_she_test_path}/include")
+set(she_test_lib_dir)
+set(she_test_link_libs)
+########################################################################################################################
+
+########################################################################################################################
+# import GSL
+set(_GSL_path "/home/shecannotsee/Desktop/sheer_third_party/libraries/GSL")
+set(GSL_include_dir "${_GSL_path}/include")
+set(GSL_lib_dir)
+set(GSL_link_libs)
+########################################################################################################################
+
 
 
 # include
-include_directories(${ffmpeg_include}) # ffmpeg
-include_directories(${CMAKE_SOURCE_DIR}/third_party/she_test/include) # she_test
-include_directories(${CMAKE_SOURCE_DIR}/third_party/gsl_4_0_0) # gsl
+include_directories(${ffmpeg_include_dir}) # ffmpeg
+include_directories(${she_test_include_dir}) # she_test
+include_directories(${GSL_include_dir}) # gsl
 
 # lib
 link_directories(${ffmpeg_lib_dir})

@@ -9,7 +9,9 @@ file(GLOB_RECURSE exec_SRC "${CMAKE_SOURCE_DIR}/exec/*")
 # list(REMOVE_ITEM exec_SRC "${CMAKE_SOURCE_DIR}/exec/base64.cpp")
 
 # exec dependency
-set(exec_dependency "-pthread")
+set(exec_dependency "-pthread" -Wl,--start-group
+        ${ffmpeg_link_libs} z jpeg x264 x265 lzma
+        -Wl,--end-group)
 
 # exec target
 if (generate_exec STREQUAL "ON")
