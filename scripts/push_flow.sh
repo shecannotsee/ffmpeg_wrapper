@@ -17,6 +17,6 @@ fi
 # wget https://github.com/aler9/rtsp-simple-server/releases/download/v0.17.7/rtsp-simple-server_v0.17.7_linux_amd64.tar.gz
 # tar xvf rtsp-simple-server_v0.17.7_linux_amd64.tar.gz
 # ./rtsp-simple-server
-ffmpeg -re -i ./resource/KTMR2R.mp4 -c copy -f rtsp rtsp://localhost:8554/mystream
+ffmpeg -re -i ./resource/KTMR2R.mp4 -r 25 -c copy -f rtsp rtsp://localhost:8554/mystream
 
 
