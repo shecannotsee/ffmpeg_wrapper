@@ -11,7 +11,7 @@ extern "C" {
 #include <libswscale/swscale.h>
 }
 
-void save_frame_as_jpeg(AVFrame* frame, int width, int height, const std::string& filename) {
+static void save_frame_as_jpeg(AVFrame* frame, int width, int height, const std::string& filename) {
   AVPacket* pkt    = av_packet_alloc();
   auto pkg_release = gsl::finally([&]() { av_packet_free(&pkt); });
 
