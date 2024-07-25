@@ -27,15 +27,25 @@ set(GSL_lib_dir)
 set(GSL_link_libs)
 ########################################################################################################################
 
+########################################################################################################################
+# import she_log
+set(_she_log_path "/home/shecannotsee/Desktop/sheer_third_party/libraries/she_log")
+set(she_log_include_dir "${_she_log_path}/include")
+set(she_log_lib_dir "${_she_log_path}/lib")
+set(she_log_link_libs she_log)
+########################################################################################################################
+
 
 
 # include
 include_directories(${ffmpeg_include_dir}) # ffmpeg
 include_directories(${she_test_include_dir}) # she_test
 include_directories(${GSL_include_dir}) # gsl
+include_directories(${she_log_include_dir})
 
 # lib
 link_directories(${ffmpeg_lib_dir})
+link_directories(${she_log_lib_dir})
 
 
 # Internal project

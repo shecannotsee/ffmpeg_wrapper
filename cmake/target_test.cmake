@@ -10,13 +10,14 @@ file(GLOB_RECURSE TEST_SRC "${CMAKE_SOURCE_DIR}/test/*")
 # test dependency
 set(test_dependency "-pthread" -Wl,--start-group
         ${ffmpeg_link_libs} z jpeg x264 x265 lzma
-        -Wl,--end-group)
+        -Wl,--end-group
+        ${she_log_link_libs})
 
 # test target
 if (generate_test STREQUAL "ON")
     add_executable(${test_name} ${TEST_SRC} ${SRC})
     target_link_libraries(${test_name} ${src_dependency} ${test_dependency})
-else()
+else ()
     message(STATUS "CMakeLists.txt error:test target build error")
 endif ()
 
