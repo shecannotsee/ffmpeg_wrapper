@@ -9,7 +9,7 @@
 
 SHE_TEST(decode_support, decode_from_file) {
   const std::string file_path  = "../resource/KTMR2R.mp4";
-  const std::string output_dir = "./decode_support/";
+  const std::string output_dir = "./decode_support/file/";
   test_support::create_dir(output_dir);
 
   pre_decoding mp4_file;
