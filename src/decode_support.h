@@ -25,7 +25,10 @@ class pre_decoding {
 
  private:
  public:
-  // 从url中初始化流信息
+  /**
+   * @brief url中初始化流信息
+   * @param url 可以是媒体文件路径,也可以是rtsp流地址
+   */
   void set_format_from(const std::string& url) noexcept {
     url_ = url;
 
@@ -54,6 +57,10 @@ class pre_decoding {
     }
   }
 
+  /**
+   * @brief 获取视频流的一些参数,参考decoding::add_video_param
+   * @return 编码器所需要的参数
+   */
   [[nodiscard]] AVCodecParameters* get_video_params() const {
     if (video_stream_index_ != -1) {
       return format_ctx_->streams[video_stream_index_]->codecpar;
@@ -61,6 +68,10 @@ class pre_decoding {
     throw std::runtime_error("Get video params failed");
   }
 
+  /**
+   * @brief 获取流的类型
+   * @return 流类型,参考ffmepg的AVCodecID枚举
+   */
   [[nodiscard]] AVCodecID get_video_type() const {
     if (video_stream_index_ != -1) {
       return get_video_params()->codec_id;
@@ -72,9 +83,18 @@ class pre_decoding {
     av_dump_format(format_ctx_, 0, url_.c_str(), 0);
   }
 
+  /**
+   * @brief 获取流格式的上下文
+   * @return 流格式的上下文
+   */
   [[nodiscard]] AVFormatContext* get_stream_ctx() const {
     return format_ctx_;
   }
+
+  /**
+   * @brief 获取视频流的数组下标
+   * @return 数组下标
+   */
   [[nodiscard]] int get_video_stream_index() const {
     return video_stream_index_;
   }
@@ -124,8 +144,13 @@ class decoding {
 
  private:
  public:
+  // 解码状态:正在解码、解码完成(通常已经到流媒体的结束位置)
   enum class state { running, done };
 
+  /**
+   * @brief 为解码器添加流格式的参数,参考pre_decoding::get_video_params
+   * @param codec_parameters 流格式的参数
+   */
   void add_video_param(const AVCodecParameters* codec_parameters) const {
     const auto ret = avcodec_parameters_to_context(codec_ctx_, codec_parameters);
     if (ret < 0) {
@@ -133,6 +158,9 @@ class decoding {
     }
   }
 
+  /**
+   * @brief 创建解码器
+   */
   void create_decoder() const {
     const auto ret = avcodec_open2(codec_ctx_, codec_, nullptr);
     if (ret < 0) {
@@ -140,9 +168,19 @@ class decoding {
     }
   }
 
+  /**
+   * @brief 设置解码后的数据格式
+   */
   void set_decode_format() {
   }
 
+  /**
+   * @brief 独立解码的接口,
+   * @param extradata 在关键帧中的SPS和PPS数据
+   * 可以通过AVFormatContext->streams[video_stream_index]->codecpar中获取extradata和extradata_size()数据
+   * @param packets 需要解码的图像帧数据
+   * @return 原始图像帧的数组
+   */
   auto independent_decoder(std::vector<uint8_t> extradata, std::vector<AVPacket*> packets) -> std::vector<AVFrame*> {
     std::vector<AVFrame*> frames{};
 
@@ -179,6 +217,12 @@ class decoding {
     return frames;
   }
 
+  /**
+   * @brief 从解码器中获取解码后的数据,调用之前需要使用 add_video_param(...) 和 create_decoder() 进行初始化
+   * @param format_ctx 流格式的上下文,用来从流信息中获取下一个压缩数据packet
+   * @param video_stream_index 视频流的下标,防止解码到音频了
+   * @return 1.是否已经解码完成; 2.原始图像帧的数组
+   */
   auto get_decode_frames(AVFormatContext* format_ctx, int video_stream_index)
       -> std::tuple<state, std::vector<AVFrame*>> {
     state now_state = state::running;
@@ -220,6 +264,5 @@ class decoding {
     return {now_state, frames};
   }
 };
-
 
 #endif  // DECODE_SUPPORT_H
