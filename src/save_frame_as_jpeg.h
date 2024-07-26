@@ -11,6 +11,13 @@ extern "C" {
 #include <libswscale/swscale.h>
 }
 
+/**
+ * @brief 将frame数据编码成mjpeg数据并写入文件
+ * @param frame 原始frame数据
+ * @param width 图片宽
+ * @param height 图片高
+ * @param filename 输出文件名
+ */
 static void save_frame_as_jpeg(AVFrame* frame, int width, int height, const std::string& filename) {
   AVPacket* pkt    = av_packet_alloc();
   auto pkg_release = gsl::finally([&]() { av_packet_free(&pkt); });
