@@ -143,44 +143,48 @@ class decoding {
   void set_decode_format() {
   }
 
-  auto get_decode_frames(AVPacket* packet) -> std::tuple<state, std::vector<AVFrame*>> {
-    av_packet_unref(packet_);
-    packet_         = av_packet_clone(packet);
-    state now_state = state::running;
+  auto independent_decoder(std::vector<uint8_t> extradata, std::vector<AVPacket*> packets) -> std::vector<AVFrame*> {
     std::vector<AVFrame*> frames{};
-    auto ret = avcodec_send_packet(codec_ctx_, packet_);
+
+    // 为当前的解码器上下文添加额外数据,主要是SPS(视频序列的整体特性)和PPS(具体帧的参数)信息,里面包含解码必要的信息
+    codec_ctx_->extradata = static_cast<uint8_t*>(av_malloc(extradata.size()));
+    if (!codec_ctx_->extradata) {
+      throw std::runtime_error("Failed to allocate memory for extradata in independent_decoder.");
+    }
+    memcpy(codec_ctx_->extradata, extradata.data(), extradata.size());
+    codec_ctx_->extradata_size = extradata.size();
+
+    // open
+    auto ret = avcodec_open2(codec_ctx_, codec_, nullptr);
     if (ret < 0) {
-      throw std::runtime_error("Error sending a packet for decoding");
+      throw std::runtime_error("Failed to open codec with codec context in independent_decoder");
     }
 
-    while (ret >= 0) {
-      ret = avcodec_receive_frame(codec_ctx_, frame_);
-      if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
-        // 解码结束
-        now_state = state::done;
-        break;
-      } else if (ret < 0) {
-        throw std::runtime_error("Error during decoding");
+    // 解码多个packet
+    for (const auto& packet : packets) {
+      // 处理一个packet
+      ret = avcodec_send_packet(codec_ctx_, packet);
+      if (ret < 0) {
+        throw std::runtime_error("Error while sending a packet to the decoder in independent_decoder");
       }
-      // 拷贝AVFrame并存入vector
-      AVFrame* frame_copy = av_frame_clone(frame_);
-      if (!frame_copy) {
-        throw std::runtime_error("Failed to clone AVFrame");
+      while (avcodec_receive_frame(codec_ctx_, frame_) >= 0) {
+        // 拷贝AVFrame并存入vector
+        AVFrame* frame_copy = av_frame_clone(frame_);
+        if (!frame_copy) {
+          throw std::runtime_error("Failed to clone AVFrame");
+        }
+        frames.push_back(frame_copy);
       }
-      frames.push_back(frame_copy);
-
-      // 清理当前帧，以便接收下一帧
-      av_frame_unref(frame_);
     }
-    return {now_state, frames};
+    return frames;
   }
 
   auto get_decode_frames(AVFormatContext* format_ctx, int video_stream_index)
       -> std::tuple<state, std::vector<AVFrame*>> {
-    av_packet_unref(packet_);
     state now_state = state::running;
     std::vector<AVFrame*> frames{};
 
+    av_packet_unref(packet_);
     auto ret = av_read_frame(format_ctx, packet_);
     if (ret < 0) {
       now_state = state::done;
@@ -213,8 +217,9 @@ class decoding {
       frames.push_back(frame_copy);
     }
 
-    return {now_state,frames};
+    return {now_state, frames};
   }
 };
+
 
 #endif  // DECODE_SUPPORT_H
