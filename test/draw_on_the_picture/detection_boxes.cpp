@@ -4,10 +4,10 @@
 
 #include <gsl/util>
 
+#include "draw_on_the_picture.h"
 #include "rtsp_buffer.h"
 #include "save_frame_as_jpeg.h"
 #include "test_support.h"
-#include "draw_on_the_picture.h"
 
 SHE_TEST(draw_on_the_picture, detection_boxes) {
   const std::string rtsp_url   = "rtsp://localhost:8554/mystream";
@@ -47,20 +47,18 @@ SHE_TEST(draw_on_the_picture, detection_boxes) {
       temp->dts  = packet_info.dts;
       packets.emplace_back(temp);
     }
-    std::vector<AVFrame*> frames         = decoder.independent_decoder(gop.extradata, packets);
-    auto frames_release = gsl::finally([&]() {
+    std::vector<AVFrame*> frames = decoder.independent_decoder(gop.extradata, packets);
+    auto frames_release          = gsl::finally([&]() {
       for (int i = 0; i < frames.size(); i++) {
         av_frame_free(&frames[i]);
       }
     });
-    //
-    for (const auto frame : frames) {
-      draw_detection_boxes(frame,get_detections_test());
-    }
 
-    for (int i = 0; i < frames.size(); i++) {
-      save_frame_as_jpeg(frames[i], frames[i]->width, frames[i]->height,
-                         output_dir + std::to_string(++frame_num) + ".jpg");
+    for (const auto frame : frames) {
+      // 画框
+      draw_detection_boxes(frame, get_detections_test());
+      // 存为jpeg
+      save_frame_as_jpeg(frame, frame->width, frame->height, output_dir + std::to_string(++frame_num) + ".jpg");
     }
   }
 
