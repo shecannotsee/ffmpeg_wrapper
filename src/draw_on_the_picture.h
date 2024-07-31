@@ -3,6 +3,7 @@
 
 #include <vector>
 extern "C" {
+#include <libswscale/swscale.h>
 #include <libavutil/frame.h>
 }
 
