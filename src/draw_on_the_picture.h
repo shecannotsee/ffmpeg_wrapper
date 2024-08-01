@@ -14,6 +14,7 @@ struct detection {
   int class_id, tracker_id;
 };
 
+// 获取多个检测框
 static std::vector<detection> get_detections_test() {
   return {{478.55, 293.91, 505.92, 316.78, 0.91269, 0, 85}};
 }
