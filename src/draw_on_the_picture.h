@@ -2,6 +2,8 @@
 #define DRAW_ON_THE_PICTURE_H
 
 #include <vector>
+#include <gsl/util>
+#include <iostream>
 extern "C" {
 #include <libswscale/swscale.h>
 #include <libavutil/frame.h>
