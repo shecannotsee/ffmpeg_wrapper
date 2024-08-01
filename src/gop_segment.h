@@ -25,6 +25,7 @@ struct gop_segment {
   bytes extradata{};                ///< 只有关键帧才添加的SPS 和 PPS 数据,每个gop只有一个
   std::vector<av_packet_info> packet{};  ///< 实际缓存的数据
   int64_t earliest_pts{0};    ///< 每一个gop中最早的pts,主要用来快速筛选
+  int64_t earliest_dts{0};    ///< 每一个gop中最早的dts,主要用来快速筛选
 };
 
 #endif  // GOP_SEGMENT_H

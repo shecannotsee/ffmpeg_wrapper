@@ -76,6 +76,7 @@ void rtsp_buffer::buffer_rtsp_stream(std::string rtsp_url) {
     if (packet.flags & AV_PKT_FLAG_KEY) {
       gop_segments_.emplace_back();  // 只在关键帧的时候添加一个gop组
       gop_segments_.back().earliest_pts = packet.pts;
+      gop_segments_.back().earliest_dts = packet.dts;
       // 添加额外信息
       AVCodecParameters* codecpar    = fmt_ctx->streams[video_stream_index]->codecpar;
       gop_segments_.back().extradata = bytes(codecpar->extradata, codecpar->extradata + codecpar->extradata_size);
