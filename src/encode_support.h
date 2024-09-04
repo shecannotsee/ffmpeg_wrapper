@@ -125,7 +125,7 @@ class encoding {
     for (const auto frame : frames) {
       auto ret = avcodec_send_frame(use_codec_ctx, frame);
       if (ret < 0) {
-        std::string error_message = std::string("Error sending frame to encoder: ") + std::string(av_err2str(ret));
+        std::string error_message = std::string("Error sending frame to encoder: ") ;
         throw std::runtime_error(error_message);
       }
       while (ret >= 0) {
