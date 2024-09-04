@@ -29,6 +29,7 @@ public:
   /**
    * @brief url中初始化流信息
    * @param url 可以是媒体文件路径,也可以是rtsp流地址
+   * @param params 控制流的参数
    */
   void set_format_from(const std::string& url, const std::vector<stream_param>& params) noexcept;
 
@@ -40,7 +41,7 @@ public:
 
   /**
    * @brief 获取流的类型
-   * @return 流类型,参考ffmepg的AVCodecID枚举
+   * @return 流类型,参考ffmpeg的AVCodecID枚举
    */
   [[nodiscard]] AVCodecID get_video_type() const;
 
