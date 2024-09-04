@@ -1,10 +1,10 @@
 #include <decode_support.h>
-#include <she_log.h>
 #include <she_test.h>
 
 #include <gsl/util>
 
 #include "save_frame_as_jpeg.h"
+#include "stream_support.h"
 #include "test_support.h"
 
 SHE_TEST(decode_support, decode_from_file) {
@@ -12,8 +12,8 @@ SHE_TEST(decode_support, decode_from_file) {
   const std::string output_dir = "./decode_support/file/";
   test_support::create_dir(output_dir);
 
-  pre_decoding mp4_file;
-  mp4_file.set_format_from(file_path);
+  stream_info mp4_file;
+  mp4_file.set_format_from(file_path, {});
 
   decoding<AVCodecID> decoder(mp4_file.get_video_type());
   decoder.add_video_param(mp4_file.get_video_params());

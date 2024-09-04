@@ -1,11 +1,11 @@
 #include <decode_support.h>
-#include <she_log.h>
 #include <she_test.h>
 
 #include <gsl/util>
 
 #include "encode_support.h"
 #include "save_frame_as_jpeg.h"
+#include "stream_support.h"
 #include "test_support.h"
 
 SHE_TEST(encode_support, encode_from_rtsp) {
@@ -15,8 +15,8 @@ SHE_TEST(encode_support, encode_from_rtsp) {
   output_dir = "./encode_support/rtsp/";
   test_support::create_dir(output_dir);
 
-  pre_decoding rtsp_stream;
-  rtsp_stream.set_format_from(rtsp_url);
+  stream_info rtsp_stream;
+  rtsp_stream.set_format_from(rtsp_url, {});
 
   decoding<AVCodecID> decoder(rtsp_stream.get_video_type());
   decoder.add_video_param(rtsp_stream.get_video_params());
@@ -46,7 +46,7 @@ SHE_TEST(encode_support, encode_from_rtsp) {
     }
   }
 
-  //图片写入测试
+  // 图片写入测试
   {
     int frame_num = 0;
     for (int i = 0; i < frames.size(); i++) {
@@ -60,7 +60,7 @@ SHE_TEST(encode_support, encode_from_rtsp) {
     encoding<AVCodecID> encoder(AV_CODEC_ID_H264);
     auto codec_ctx = rtsp_stream.get_stream_ctx()->streams[rtsp_stream.get_video_stream_index()]->codecpar;
     std::vector<uint8_t> extradata(codec_ctx->extradata, codec_ctx->extradata + codec_ctx->extradata_size);
-    auto packets         = encoder.get_encode_packets(frames,extradata);
+    auto packets         = encoder.get_encode_packets(frames, extradata);
     auto packets_release = gsl::finally([&]() {
       for (auto& packet : packets) {
         av_packet_free(&packet);

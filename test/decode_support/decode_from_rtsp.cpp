@@ -1,10 +1,10 @@
 #include <decode_support.h>
-#include <she_log.h>
 #include <she_test.h>
 
 #include <gsl/util>
 
 #include "save_frame_as_jpeg.h"
+#include "stream_support.h"
 #include "test_support.h"
 
 SHE_TEST(decode_support, decode_from_rtsp) {
@@ -12,8 +12,8 @@ SHE_TEST(decode_support, decode_from_rtsp) {
   const std::string output_dir = "./decode_support/rtsp/";
   test_support::create_dir(output_dir);
 
-  pre_decoding rtsp_stream;
-  rtsp_stream.set_format_from(rtsp_url);
+  stream_info rtsp_stream;
+  rtsp_stream.set_format_from(rtsp_url, {});
 
   decoding<AVCodecID> decoder(rtsp_stream.get_video_type());
   decoder.add_video_param(rtsp_stream.get_video_params());
