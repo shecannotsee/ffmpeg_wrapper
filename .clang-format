@@ -1,0 +1,26 @@
+# TODO: 1. This template cannot handle the constructor format with colons.
+# TODO: 2. Unable to handle enum values with line breaks.
+# TODO: 3. The case statements in switch-case are not enclosed within code blocks.
+# HACK: x. Empty functions, i.e., empty code blocks, may not be written in one line, and no space is added before the opening parenthesis - need to avoid empty code blocks.
+# HACK: x. Cannot automatically add a newline after a function's end - can be manually added while writing.
+BasedOnStyle: Google
+
+# Allow double brackets such as std::vector<std::vector<int>>.
+Standard : c++11
+
+# Global settings
+ColumnLimit : 120          # Set the maximum line length for code
+UseTab : Never             # Use spaces instead of tabs for indentation
+IndentWidth : 2            # Set the indentation width
+
+# Code block formatting settings
+BreakBeforeBraces : Attach                # Set the opening brace not to break to a new line, can be customized
+SpaceBeforeParens : ControlStatements     # Automatically add a space before parentheses in control statements
+AllowShortFunctionsOnASingleLine : None   # Simple functions will not be written in a single line
+AlwaysBreakAfterReturnType : None         # Whether the function return type should be defined on a new line
+BinPackParameters : false                 # When there are multiple parameters, each one will be on a separate line
+
+# Code writing details
+AccessModifierOffset : -1           # Set public and private to only indent one space
+AlignConsecutiveAssignments : true  # Align consecutive variables and comments
+PointerAlignment : Left             # Set pointer and reference alignment
