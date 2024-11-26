@@ -83,7 +83,7 @@ class av_codec_context_support {
    * @param stream 输入的 demux 对象
    * @return 返回配置后的编码上下文指针
    * @throw std::runtime_error 如果无法获取编解码参数或发生其他错误
-     */
+   */
     template <demux::type t>
     [[nodiscard]] auto add_avcodec_parameters(const demux& stream) -> const AVCodecContext* {
       release();
@@ -104,7 +104,9 @@ class av_codec_context_support {
      */
     auto get_jpeg_encode(int width, int height) noexcept -> const AVCodecContext*;
 
-    auto get_h264_nvenc_encode(const demux& stream) noexcept -> const AVCodecContext*;
+  auto get_h264_nvenc_encode(const demux& stream) noexcept -> const AVCodecContext*;
+
+  auto get_h264_encode(const demux& stream) noexcept -> const AVCodecContext*;
 };
 
 #endif  // FFMPEG_WRAPPER_AV_CODEC_CONTEXT_H

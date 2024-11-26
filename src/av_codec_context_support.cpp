@@ -73,3 +73,20 @@ auto av_codec_context_support::get_h264_nvenc_encode(const demux& stream) noexce
   ctx_->pix_fmt      = AV_PIX_FMT_NV12;
   return ctx_;
 }
+
+auto av_codec_context_support::get_h264_encode(const demux& stream) noexcept -> const AVCodecContext* {
+  auto param = stream.get_codec_parameters<demux::type::video>();
+  release();
+  alloc_default(AV_CODEC_ID_H264);
+  ctx_->bit_rate     = param->bit_rate;
+  ctx_->codec_id     = param->codec_id;
+  ctx_->codec_type   = param->codec_type;
+  ctx_->width        = param->width;
+  ctx_->height       = param->height;
+  ctx_->time_base    = (AVRational){1, 25};
+  ctx_->framerate    = (AVRational){25, 1};
+  ctx_->gop_size     = 10;
+  ctx_->max_b_frames = 0;
+  ctx_->pix_fmt      = AV_PIX_FMT_YUVJ420P;
+  return ctx_;
+}
