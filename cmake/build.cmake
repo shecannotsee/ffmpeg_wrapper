@@ -1,5 +1,5 @@
 # Set language standards
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (build_release STREQUAL ON)
