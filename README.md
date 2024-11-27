@@ -1,64 +1,63 @@
 # ffmpeg_wrapper
 
-欢迎来到 **ffmpeg_wrapper** 项目！  
-本项目是一个基于 FFmpeg 的 C++17 音乐播放器库，旨在为开发者提供简洁高效的接口，用于音频解码、播放以及歌曲信息解析。
+Welcome to the **ffmpeg_wrapper** project!
+This project is a C++17 wrapper around FFmpeg.
 
-## 分支策略
+## Branching Strategy
 
-本项目采用以下分支策略进行版本管理：
+This project uses the following branching strategy for version management:
 
-- **`master` 分支**  
-  这是项目的默认分支，主要提供项目的引导信息和稳定版本的参考。`master` 分支不会直接用于开发。
+- **`master` branch**  
+  This is the default branch of the project, primarily used for providing project information and stable version references. The `master` branch is not directly used for development.
 
-- **`develop` 分支**  
-  这是我们的主开发分支，所有新的功能和改动都会在此分支完成。如果您是开发者，计划参与项目贡献，请从此分支拉取最新代码并基于此创建功能分支。
+- **`develop` branch**  
+  This is our main development branch, where all new features and changes will be made. If you are a developer planning to contribute to the project, please pull the latest code from this branch and create feature branches based on it.
 
-- **发布版本（标签，例如 `1.0.0`）**  
-  项目的稳定发布版本会通过标签的形式标记。每个版本均经过测试，适合用于生产环境。
+- **Release versions (tags, e.g., `1.0.0`)**  
+  Stable release versions of the project are marked with tags. Each version is tested and suitable for production environments.
 
-## 如何选择合适的分支/版本
+## How to Choose the Right Branch/Version
 
-- **对于开发者**  
-  如果您希望贡献代码或尝试最新的功能，请使用 `develop` 分支。
+- **For developers**  
+  If you wish to contribute code or try out the latest features, use the `develop` branch.
   ```bash
   git checkout develop
   ```
 
-- **对于用户**  
-  如果您只需要稳定的功能，请选择对应的发布版本。例如：
+- **For users**  
+  If you need stable functionality, choose the corresponding release version. For example:
   ```bash
   git checkout tags/1.0.0
   ```
 
-## 快速开始
-### 克隆项目
+## Quick Start
+### Clone the project
 
-1. 克隆仓库到本地：
+1. Clone the repository to your local machine:
     ```bash
-    git clone https://github.com/your_username/ffmpeg_wrapper.git
+    git clone https://github.com/shecannotsee/ffmpeg_wrapper.git
     cd ffmpeg_wrapper
    ```
 
-2. 切换分支或标签：
+2. Switch to a branch or tag:
 
-- 使用开发分支：
+- To use the development branch:
     ```bash
     git checkout develop
     ```
 
-- 使用稳定版本：
+- To use a stable release version:
     ```bash
     git checkout tags/1.0.0
     ```
-### 项目构建
+### Build the project
 
-1. 确保安装了以下依赖项：
-   - FFmpeg 4.3 或更高版本 
-   - C++17 编译器（例如 GCC 9.0+ 或 Clang 10.0+）
-   -  Qt5（用于 UI 模块）
+1. Ensure the following dependencies are installed:
+   - FFmpeg 4.3 or higher
+   - A C++17 compatible compiler (e.g., GCC 9.0+ or Clang 10.0+)
 
 
-2. 构建项目：
+2. Build the project:
     ```bash
     mkdir build
     cd build
@@ -66,30 +65,25 @@
     make
    ```
 
-3. 运行示例应用（如适用）：
-    ```bash
-    ./ffmpeg_wrapper_demo
-   ```
-## 功能
-- 支持多种音频格式的解码与播放
-- 快速提取歌曲的元数据（如标题、专辑、艺术家等）
-- 提供直观的 Qt5 界面示例
-- 模块化设计，便于扩展
+## Features
+- Demuxing
+- Faster and safer encoding/decoding features
+- Support for drawing on raw image formats
 
-## 贡献指南
+## Contributing Guidelines
 
-我们欢迎开发者参与项目改进！
-请阅读 CONTRIBUTING.md 了解详细的贡献流程，包括如何提交代码、报告问题或建议新功能。
-## 问题反馈
+We welcome developers to contribute to the project!
 
-如果您在使用过程中遇到问题，请访问 Issues 页面 提交问题。我们会尽快回复并解决。
-## 开源许可证
+## Issue Reporting
 
-本项目基于 MIT License 开源，您可以自由使用、修改和分发代码。
+If you encounter any issues during usage, please visit the Issues page to submit a problem. We will respond and resolve it as soon as possible.
+
+## Open Source License
+
+This project is open-source under the MIT License. You are free to use, modify, and distribute the code.
 
 ---
 
-感谢您的支持与关注！
-如果您喜欢这个项目，欢迎给我们一个star
+Thank you for your support and attention!If you like this project, feel free to give us a star!
 
 
