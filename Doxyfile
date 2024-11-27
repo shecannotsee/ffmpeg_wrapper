@@ -1,0 +1,5 @@
+PROJECT_NAME = "ffmpeg_wrapper"
+USE_MDFILE_AS_MAINPAGE = ./src/ffmpeg_wrapper.h
+INPUT = ./src
+OUTPUT_DIRECTORY = ./docs/doxygen
+RECURSIVE = YES
