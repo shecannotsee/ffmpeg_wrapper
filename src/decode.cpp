@@ -24,7 +24,7 @@ decode::decode(const std::string& decoder_name) noexcept : decode() {
 decode::decode(const enum AVCodecID id, const bool using_hardware) noexcept : decode() {
   if (using_hardware) {
     if (id != AV_CODEC_ID_H264 && id != AV_CODEC_ID_HEVC) {
-      throw std::runtime_error("Unsupported hard decoding format: " +
+      throw std::runtime_error("Unsupported hardware decoding format: " +
                                std::string(avcodec_get_name(id) ? avcodec_get_name(id) : "Unknown codec"));
     }
     const std::string hard_decoder_name = id == AV_CODEC_ID_H264 ? "h264_cuvid" : "hevc_cuvid";
@@ -54,7 +54,7 @@ decode::~decode() {
 }
 
 void decode::set_parameters(const AVCodecContext* params) noexcept {
-  // 参考 ffmpeg/libavcodec/utils.c 的函数 avcodec_parameters_to_context 的实现
+  // Refer to the function avcodec_parameters_to_context in ffmpeg/libavcodec/utils.c
   ctx_->codec_type = params->codec_type;
   ctx_->codec_id   = params->codec_id;
   ctx_->codec_tag  = params->codec_tag;
@@ -122,7 +122,7 @@ void decode::create_decoder(const AVCodecContext* params) {
   }
 }
 
-auto decode::decoding(av_packet pkt)const -> std::vector<av_frame> {
+auto decode::decoding(av_packet pkt) const -> std::vector<av_frame> {
   std::vector<av_frame> frame_list;
 
   auto ret = avcodec_send_packet(ctx_, pkt.get());
@@ -131,8 +131,8 @@ auto decode::decoding(av_packet pkt)const -> std::vector<av_frame> {
   }
 
   while (ret >= 0) {
-    av_frame frame;  // 由于解码后的 frame 内存占用较大, 所以考虑移动来处理, 又由于移动后需要重新申请内存,
-                     // 所以将其声明移动到循环中
+    av_frame frame;  // Since decoded frames use a large amount of memory, they are moved to handle them efficiently.
+                     // Therefore, the frame is declared within the loop.
     ret = avcodec_receive_frame(ctx_, frame.get());
     if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
       return frame_list;
@@ -140,7 +140,7 @@ auto decode::decoding(av_packet pkt)const -> std::vector<av_frame> {
       throw std::runtime_error("Error during decoding: " + std::to_string(ret));
     }
 
-    frame_list.emplace_back(std::move(frame));  // 移动构造, 节省内存开销
+    frame_list.emplace_back(std::move(frame));  // Move construct to save memory overhead.
   }
 
   return frame_list;

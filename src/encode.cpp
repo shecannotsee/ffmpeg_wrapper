@@ -24,11 +24,10 @@ encode::encode(const std::string& encoder_name) noexcept : encode() {
 encode::encode(const enum AVCodecID id, const bool using_hardware) noexcept : encode() {
   if (using_hardware) {
     if (id != AV_CODEC_ID_H264 && id != AV_CODEC_ID_HEVC) {
-      throw std::runtime_error("Unsupported hard encoding format: " +
+      throw std::runtime_error("Unsupported hardware encoding format: " +
                                std::string(avcodec_get_name(id) ? avcodec_get_name(id) : "Unknown codec"));
     }
     const std::string hard_encoder_name = (id == AV_CODEC_ID_H264) ? "h264_nvenc" : "hevc_nvenc";
-    //
     codec_ = avcodec_find_encoder_by_name(hard_encoder_name.c_str());
     if (!codec_) {
       throw std::runtime_error("Codec " + hard_encoder_name + " not found.");
@@ -61,8 +60,9 @@ void encode::set_parameters(const AVCodecContext* params) noexcept {
   constexpr auto default_framerate   = (AVRational){25, 1};
   constexpr int default_gop_size     = 10;
   constexpr int default_max_b_frames = 0;
+
   if (params) {
-    // Encoding with custom parameters...
+    // Encoding with custom parameters
     ctx_->bit_rate     = params->bit_rate;
     ctx_->width        = params->width;
     ctx_->height       = params->height;
@@ -71,21 +71,13 @@ void encode::set_parameters(const AVCodecContext* params) noexcept {
     ctx_->gop_size     = params->gop_size;
     ctx_->max_b_frames = params->max_b_frames;
     ctx_->pix_fmt      = params->pix_fmt;
-    // 设置其他参数
   } else {
-    // Encoding using default parameters...
-    /* put sample parameters */
-    ctx_->bit_rate = default_bit_rate;  // 默认比特率
-    ctx_->width    = default_width;     // 默认宽度
-    ctx_->height   = default_height;    // 默认高度
-    /* frames per second */
+    // Encoding with default parameters
+    ctx_->bit_rate = default_bit_rate;  // Default bit rate
+    ctx_->width    = default_width;     // Default width
+    ctx_->height   = default_height;    // Default height
     ctx_->time_base = default_time_base;
     ctx_->framerate = default_framerate;
-    // 每十帧发射一个帧内帧
-    // 在传递帧之前检查帧pict_type
-    // 如果帧->pict_type为AV_PICTURE_type_I，则发送到编码器
-    // 则忽略gop\usize，并输出编码器
-    // 无论gop_size如何，都将始终是I帧
     ctx_->gop_size     = default_gop_size;
     ctx_->max_b_frames = default_max_b_frames;
     ctx_->pix_fmt      = AV_PIX_FMT_YUVJ420P;
@@ -125,7 +117,7 @@ auto encode::encoding(av_frame frame) const -> std::vector<av_packet> {
       throw std::runtime_error("Error during encoding: " + std::to_string(ret));
     }
 
-    pkt_list.emplace_back(pkt);  // 拷贝构造, 不能够移动否则会导致内存安全问题
+    pkt_list.emplace_back(pkt);  // Copy-constructor, cannot move due to memory safety concerns
     av_packet_unref(pkt.get());
   }
 

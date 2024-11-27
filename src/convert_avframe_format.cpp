@@ -17,12 +17,12 @@ auto nv12_to_yuv420p_sample(AVFrame* nv12) -> AVFrame* {
         std::string(av_get_pix_fmt_name(format) ? av_get_pix_fmt_name(format) : "Unknown pixel format");
     throw std::runtime_error(err_msg);
   }
-  AVFrame* yuv420p = av_frame_alloc();  // Need to check the return value
+  AVFrame* yuv420p = av_frame_alloc();  // TODO: Need to check the return value
   yuv420p->format  = AV_PIX_FMT_YUV420P;
   yuv420p->width   = nv12->width;
   yuv420p->height  = nv12->height;
-  av_frame_get_buffer(yuv420p, 32);  // Need to check the return value
-  av_frame_make_writable(yuv420p);   // Need to check the return value
+  av_frame_get_buffer(yuv420p, 32);  // TODO: Need to check the return value
+  av_frame_make_writable(yuv420p);   // TODO: Need to check the return value
 
   // Y
   if (nv12->linesize[0] == nv12->width) {
@@ -95,12 +95,12 @@ auto yuv420p_to_nv12_sample(AVFrame* yuv420p) -> AVFrame* {
         std::string(av_get_pix_fmt_name(format) ? av_get_pix_fmt_name(format) : "Unknown pixel format");
     throw std::runtime_error(err_msg);
   }
-  AVFrame* nv12 = av_frame_alloc();  // Need to check the return value
+  AVFrame* nv12 = av_frame_alloc();  // TODO: Need to check the return value
   nv12->format  = AV_PIX_FMT_NV12;
   nv12->width   = yuv420p->width;
   nv12->height  = yuv420p->height;
-  av_frame_get_buffer(nv12, 32);  // Need to check the return value
-  av_frame_make_writable(nv12);   // Need to check the return value
+  av_frame_get_buffer(nv12, 32);  // TODO: Need to check the return value
+  av_frame_make_writable(nv12);   // TODO: Need to check the return value
 
   // Y
   if (yuv420p->linesize[0] == yuv420p->width) {

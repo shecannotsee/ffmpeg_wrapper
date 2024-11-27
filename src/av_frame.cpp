@@ -26,15 +26,13 @@ av_frame::av_frame(const av_frame& other) noexcept : frame_(nullptr) {
   }
 }
 
-// 移动构造
 av_frame::av_frame(av_frame&& other) noexcept : frame_(other.frame_) {
-  other.frame_ = nullptr;  // 使原对象失去所有权
+  other.frame_ = nullptr;  // Invalidate the original object
 }
 
-// 拷贝赋值
 av_frame& av_frame::operator=(const av_frame& other) noexcept {
   if (this != &other) {
-    release();  // 释放当前的 frame_
+    release();  // Release current frame_
     if (other.frame_) {
       frame_ = av_frame_clone(other.frame_);
       if (!frame_) {
@@ -45,12 +43,11 @@ av_frame& av_frame::operator=(const av_frame& other) noexcept {
   return *this;
 }
 
-// 移动赋值
 av_frame& av_frame::operator=(av_frame&& other) noexcept {
   if (this != &other) {
-    release();                    // 释放当前的 frame_
-    frame_       = other.frame_;  // 转移所有权
-    other.frame_ = nullptr;       // 使原对象失去所有权
+    release();                    // Release current frame_
+    frame_       = other.frame_;  // Transfer ownership
+    other.frame_ = nullptr;       // Invalidate the original object
   }
   return *this;
 }

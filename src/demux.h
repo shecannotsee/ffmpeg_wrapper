@@ -18,105 +18,105 @@ struct stream_param {
 };
 
 /**
- * @brief 处理音视频解复用的类
+ * @brief A class for handling audio and video demuxing.
  *
- * 该类使用 FFmpeg 库解复用音频和视频流。可以打开媒体文件，并获取指定类型的数据包。
+ * This class uses FFmpeg to demux audio and video streams. It can open media files and retrieve packets of specified types.
  */
 class demux {
-  std::string url_;           ///< 媒体文件的 URL
-  AVFormatContext* fmt_ctx_;  ///< FFmpeg 格式上下文
+  std::string url_;           ///< URL of the media file
+  AVFormatContext* fmt_ctx_;  ///< FFmpeg format context
   struct {
-    int stream_index{-1};  ///< 流索引
+    int stream_index{-1};  ///< Stream index
   } video_, audio_;
 
  public:
   /**
-   * @brief 默认构造函数
+   * @brief Default constructor.
    *
-   * 构造一个 demux 对象，初始化日志记录器。
+   * Constructs a `demux` object and initializes the logger.
    */
   demux() noexcept;
 
+  /**
+   * @brief Destructor.
+   *
+   * Frees resources associated with the format context.
+   */
   ~demux();
 
  public:
   /**
-   * @brief 键值对列表类型
+   * @brief Type alias for a list of key-value pairs.
    *
-   * 用于存储参数的键值对列表，比如[{k1,v1,0},{...},{kn,vn,0},{...}]
+   * Used to store a list of parameter key-value pairs, e.g., [{k1,v1,0},{...},{kn,vn,0},{...}].
    */
   using key_value_list = std::vector<std::tuple<std::string, std::string, int>>;
 
   /**
-   * @brief 打开媒体文件
+   * @brief Opens a media file.
    *
-   * @param url 媒体文件的 URL
-   * @param params 打开文件的参数
-   * @throw std::runtime_error 如果无法打开文件或获取流信息
+   * @param url The URL of the media file.
+   * @param params Optional parameters to be passed to the `avformat_open_input` function.
+   * @throw std::runtime_error If the file cannot be opened or stream information cannot be retrieved.
    */
   void open(const std::string& url, const key_value_list& params = {});
 
   /**
-   * @brief 数据包类型
+   * @brief Enum representing the type of media packet.
    */
   enum class type { audio, video, av };
 
+  /**
+   * @brief A class to hold both packet type and the packet itself.
+   */
   class type_av_packet {
    public:
-    type t;
-    av_packet pkt;
+    type t;         ///< The type of the packet (audio, video, or av)
+    av_packet pkt;  ///< The packet itself
   };
 
   /**
-   * @brief 获取指定数量的数据包
+   * @brief Starts receiving a specified number of packets.
    *
-   * @tparam t 数据包类型（audio, video, av）
-   * @param num_packets 要获取的数据包数量
-   * @return 包含数据包类型以及数据包的数组
-   * @throw std::runtime_error 如果发生读取错误
+   * @tparam t The type of packet (audio, video, or av).
+   * @param num_packets The number of packets to receive.
+   * @return A vector containing the packets of the specified type.
+   * @throw std::runtime_error If an error occurs while reading the stream.
    */
   template <type t>
   [[nodiscard]] auto start_receiving(size_t num_packets = 25) -> std::vector<type_av_packet>;
 
  public:
   /**
-   * @brief 获取指定类型的编解码参数
+   * @brief Retrieves the codec parameters for a specified stream type.
    *
-   * 根据提供的数据包类型，获取相应的编解码参数。
+   * @tparam t The packet type (either `type::video` or `type::audio`).
+   * @return A pointer to the `AVCodecParameters` structure for the specified stream.
+   * @throw std::runtime_error If the stream index is invalid or out of range.
    *
-   * @tparam t 数据包类型，支持类型包括 `type::video` 和 `type::audio`
-   * @return 指向相应流的 `AVCodecParameters` 结构的指针
-   * @throw std::runtime_error 如果流索引无效或超出范围
-   *
-   * @note 使用此方法时，请确保已成功打开媒体文件并正确设置视频和音频流索引。
+   * @note This method should be used after successfully opening the media file and setting the video/audio stream index.
    */
   template <type t>
   [[nodiscard]] auto get_codec_parameters() const -> const AVCodecParameters*;
 
   /**
-   * @brief 获取指定类型的编解码器 ID
+   * @brief Retrieves the codec ID for a specified stream type.
    *
-   * 根据提供的数据包类型，获取相应流的编解码器 ID。
+   * @tparam t The packet type (either `type::video` or `type::audio`).
+   * @return The `AVCodecID` of the specified stream.
+   * @throw std::runtime_error If the stream index is invalid or out of range.
    *
-   * @tparam t 数据包类型，支持类型包括 `type::video` 和 `type::audio`
-   * @return 返回相应流的 `AVCodecID`
-   * @throw std::runtime_error 如果流索引无效或超出范围
-   *
-   * @note 使用此方法时，请确保已成功打开媒体文件并正确设置视频和音频流索引。
+   * @note This method should be used after successfully opening the media file and setting the video/audio stream index.
    */
   template <type t>
   [[nodiscard]] auto get_codec_id() -> enum AVCodecID;
 
   /**
-   * @brief 获取指定类型的媒体流。
+   * @brief Retrieves the media stream for a specified type.
    *
-   * 根据模板参数类型返回对应的音频或视频流。
-   *
-   * @tparam t 媒体流的类型，可以是 `type::video` 或 `type::audio`。
-   *
-   * @return 指向 AVStream 的指针，表示请求的媒体流。
-   *
-   * @throws static_assert 如果模板参数类型不是 `type::video` 或 `type::audio`。
+   * @tparam t The type of media stream, either `type::video` or `type::audio`.
+   * @return A pointer to the corresponding `AVStream`.
+   * @throw static_assert If the template argument is neither `type::video` nor `type::audio`.
    */
   template <type t>
   [[nodiscard]] auto get_stream() -> AVStream*;

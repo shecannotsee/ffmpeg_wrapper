@@ -13,53 +13,72 @@ extern "C" {
 
 /**
  * @class decode
- * @brief ffmpeg 解码器封装类
+ * @brief A wrapper class for FFmpeg decoders.
  *
- * `decode` 类提供了对 ffmpeg 编码器的简单封装，允许用户通过编码器名称或解码器 ID 创建解码器实例。
+ * The `decode` class provides a simple wrapper for FFmpeg decoders, allowing users to create a decoder instance
+ * either by decoder name or by decoder ID.
  */
 class decode {
-  AVCodec* codec_;       ///< FFmpeg 编码器
-  AVCodecContext* ctx_;  ///< 编码上下文
+  AVCodec* codec_;       ///< The FFmpeg codec
+  AVCodecContext* ctx_;  ///< Codec context
 
   /**
-   * @brief 默认构造函数
+   * @brief Default constructor.
    *
-   * @note 此构造函数为私有，仅用于其他构造函数的初始化。
+   * @note This constructor is private and only used for initialization in other constructors.
    */
   decode() noexcept;
 
  public:
   /**
-   * @brief 使用解码器名称构造解码器实例
+   * @brief Constructs a decoder instance using the decoder name.
    *
-   * @param decoder_name 解码器的名称
-   * @throws std::terminate 如果未找到解码器或无法分配上下文
+   * @param decoder_name The name of the decoder.
+   * @throws std::runtime_error If the decoder is not found or if context allocation fails.
    */
   explicit decode(const std::string& decoder_name) noexcept;
 
   /**
-   * @brief 使用解码器 ID 构造解码器实例
+   * @brief Constructs a decoder instance using the decoder ID.
    *
-   * @param id 解码器的 ID
-   * @param using_hardware 是否使用硬解码器
-   * @throws std::terminate 如果未找到解码器或无法分配上下文
+   * @param id The decoder's ID.
+   * @param using_hardware Whether to use hardware decoding.
+   * @throws std::runtime_error If the decoder is not found or if context allocation fails.
    */
   explicit decode(enum AVCodecID id, bool using_hardware = false) noexcept;
 
   /**
-   * @brief 析构函数
+   * @brief Destructor.
    *
-   * 释放解码上下文的资源。
+   * Releases resources associated with the decoder context.
    */
   ~decode();
 
  private:
+  /**
+   * @brief Set the parameters for the codec context.
+   *
+   * This method sets codec context parameters based on the provided codec context.
+   *
+   * @param params The codec context parameters.
+   */
   void set_parameters(const AVCodecContext* params) noexcept;
 
  public:
+  /**
+   * @brief Creates a decoder based on the given codec context parameters.
+   *
+   * @param params The codec context parameters.
+   */
   void create_decoder(const AVCodecContext* params);
 
-  [[nodiscard]] auto decoding(av_packet pkt)const -> std::vector<av_frame>;
+  /**
+   * @brief Decodes a packet and returns the decoded frames.
+   *
+   * @param pkt The packet to decode.
+   * @return A list of decoded frames.
+   */
+  [[nodiscard]] auto decoding(av_packet pkt) const -> std::vector<av_frame>;
 };
 
 #endif  // FFMPEG_WRAPPER_DECODE_H

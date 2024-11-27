@@ -6,38 +6,39 @@
 #include "av_frame.h"
 
 /**
- * @brief 将给定的 AVFrame 保存为 PGM 格式的图像文件。
+ * @brief Saves the given AVFrame as a PGM (Portable Gray Map) image file.
  *
- * 此函数接收一个 AVFrame 对象，并将其内容以 PGM 格式保存到指定的文件名中。
+ * This function takes an AVFrame object and saves its contents as a PGM image file with the specified file name.
  *
- * @param frame 要保存的 AVFrame 对象，包含图像数据。
- * @param file_name 输出文件的路径和名称。
+ * @param frame The AVFrame object to be saved, containing image data.
+ * @param file_name The path and name of the output file.
  *
- * @note PGM (Portable Gray Map) 是一种简单的灰度图像文件格式。
- *       此函数假定 AVFrame 对象的格式是灰度格式，且数据可以按行写入文件。
+ * @note PGM (Portable Gray Map) is a simple grayscale image format.
+ *       This function assumes the AVFrame object is in grayscale format and its data can be written line-by-line.
  *
- * @warning 确保在调用此函数之前，AVFrame 对象已正确初始化并包含有效的图像数据。
+ * @warning Ensure that the AVFrame object is properly initialized and contains valid image data before calling this
+ * function.
  */
 void pgm_save(av_frame& frame, const std::string& file_name);
 
 /**
- * @brief 将给定的 AVFrame 保存为 JPEG 文件。
+ * @brief Saves the given AVFrame as a JPEG file.
  *
- * 此函数将提供的 AVFrame 编码为 JPEG 格式并保存到指定文件中。
- * 在进行编码之前，它会检查 AVFrame 的像素格式是否与 MJPEG 编码器兼容。
+ * This function encodes the provided AVFrame into JPEG format and saves it to the specified file.
+ * Before encoding, it checks whether the pixel format of the AVFrame is compatible with MJPEG encoding.
  *
- * @param frame 要编码的 AVFrame。必须是兼容的像素格式。
- * @param file_name 将要保存 JPEG 图像的文件名。
+ * @param frame The AVFrame to be encoded. It must have a compatible pixel format.
+ * @param file_name The file name where the JPEG image will be saved.
  *
- * @throws std::runtime_error 如果帧的像素格式不受支持，或在打开写入文件时发生错误，
- *                             或在写入 JPEG 数据到文件时发生错误。
+ * @throws std::runtime_error If the frame's pixel format is unsupported, or if there is an error opening the file for
+ * writing, or during the JPEG encoding process.
  *
- * 支持的像素格式：
- * - AV_PIX_FMT_YUVJ420P: 常用的 JPEG 输入格式
- * - AV_PIX_FMT_YUVJ422P: 适用于部分 JPEG 编码的格式
- * - AV_PIX_FMT_YUVJ444P: 高质量的 JPEG 编码格式
- * - AV_PIX_FMT_RGB24: 可以直接编码为 JPEG 格式
- * - AV_PIX_FMT_RGBA: 带透明通道的 RGB 格式（透明通道会被丢弃）
+ * Supported pixel formats:
+ * - AV_PIX_FMT_YUVJ420P: Common JPEG input format
+ * - AV_PIX_FMT_YUVJ422P: Suitable for certain JPEG encodings
+ * - AV_PIX_FMT_YUVJ444P: High-quality JPEG encoding format
+ * - AV_PIX_FMT_RGB24: Can be directly encoded into JPEG
+ * - AV_PIX_FMT_RGBA: RGB format with an alpha channel (alpha channel will be discarded)
  */
 void jpeg_save(av_frame& frame, const std::string& file_name);
 

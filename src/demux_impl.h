@@ -12,43 +12,44 @@ template <demux::type t>
   while (pkt_list.size() < num_packets) {
     if (const auto ret = av_read_frame(fmt_ctx_, pkt.get()); ret < 0) {
       if (ret == AVERROR_EOF) {
-        break;
+        break;  // End of file reached, stop reading
       } else {
-        // 发生其他错误，抛出异常
+        // An error occurred, throw an exception
         char err[AV_ERROR_MAX_STRING_SIZE] = {0};
         const std::string err_msg =
             "Error reading frame: " + std::string(av_make_error_string(err, AV_ERROR_MAX_STRING_SIZE, ret));
         throw std::runtime_error(err_msg);
       }
     }
-    // 根据类型过滤数据包
+
+    // Filter the packet based on its type
     if constexpr (t == type::audio) {
       if (pkt.get()->stream_index != audio_.stream_index) {
-        continue;
+        continue;  // Skip non-audio packets
       }
       pkt_type = type::audio;
     } else if constexpr (t == type::video) {
       if (pkt.get()->stream_index != video_.stream_index) {
-        continue;
+        continue;  // Skip non-video packets
       }
       pkt_type = type::video;
     } else if constexpr (t == type::av) {
       pkt_type = pkt.get()->stream_index == audio_.stream_index ? type::audio : type::video;
     }
-    // Added when data is not corrupted
+    // Only add valid (non-corrupted) packets to the list
     if (!(pkt.get()->flags & AV_PKT_FLAG_CORRUPT)) {
       static type_av_packet tmp;
       tmp = type_av_packet({pkt_type, pkt});
-      pkt_list.emplace_back(tmp);  // 拷贝构造
+      pkt_list.emplace_back(tmp);  // Copy construct the packet
     }
-    av_packet_unref(pkt.get());
+    av_packet_unref(pkt.get());  // Unreference the packet to reuse the struct
   }
   return pkt_list;
 }
 
 template <demux::type t>
 [[nodiscard]] auto demux::get_codec_parameters() const -> const AVCodecParameters* {
-  // 检查索引是否是有效值，并且在有效范围内
+  // Check if the stream index is valid and within range
   if constexpr (t == type::video) {
     if (video_.stream_index < 0 || video_.stream_index >= fmt_ctx_->nb_streams) {
       throw std::runtime_error("Invalid video stream index.");
@@ -66,6 +67,7 @@ template <demux::type t>
 
 template <demux::type t>
 [[nodiscard]] auto demux::get_codec_id() -> enum AVCodecID {
+  // Retrieve the codec parameters and return the codec ID
   auto codec_parameters = this->get_codec_parameters<t>();
   return codec_parameters->codec_id;
 }
@@ -77,7 +79,7 @@ template <demux::type t>
   } else if constexpr (t == type::audio) {
     return fmt_ctx_->streams[audio_.stream_index];
   } else {
-    static_assert(t == type::video || t == type::audio, "Invalid type for get_codec_parameters");
+    static_assert(t == type::video || t == type::audio, "Invalid type for get_stream");
   }
 }
 

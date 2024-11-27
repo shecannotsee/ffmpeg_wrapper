@@ -15,7 +15,7 @@ demux::~demux() {
 void demux::open(const std::string &url, const demux::key_value_list &params) {
   url_ = url;
 
-  // 打开输入文件，并分配格式上下文
+  // Open the input file and allocate the format context
   AVDictionary *opts = nullptr;
   for (const auto &param : params) {
     auto [key, value, flags] = param;
@@ -33,15 +33,15 @@ void demux::open(const std::string &url, const demux::key_value_list &params) {
     opts = nullptr;
   }
 
-  // 检索流信息
+  // Retrieve stream information
   ret = avformat_find_stream_info(fmt_ctx_, nullptr);
   if (ret < 0) {
-    const std::string err_msg = "Could not find stream information with " + url_;
+    const std::string err_msg = "Could not find stream information for " + url_;
     avformat_close_input(&fmt_ctx_);
     throw std::runtime_error(err_msg);
   }
 
-  // 获取流信息: 方法1
+  // Method 1: Get stream information
   bool find_video = false;
   bool find_audio = false;
   for (unsigned int i = 0; i < fmt_ctx_->nb_streams; i++) {
@@ -57,15 +57,15 @@ void demux::open(const std::string &url, const demux::key_value_list &params) {
     }
   }
 
-  // 获取流信息: 方法2
-  // video_.stream_index = av_find_best_stream(fmt_ctx_, AVMEDIA_TYPE_VIDEO, /*auto*/ -1, /*auto*/ -1, NULL, 0);
-  // audio_.stream_index = av_find_best_stream(fmt_ctx_, AVMEDIA_TYPE_AUDIO, /*auto*/ -1, /*auto*/ -1, NULL, 0);
+  // Method 2: Use `av_find_best_stream` to find video/audio stream
+  // video_.stream_index = av_find_best_stream(fmt_ctx_, AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0);
+  // audio_.stream_index = av_find_best_stream(fmt_ctx_, AVMEDIA_TYPE_AUDIO, -1, -1, NULL, 0);
 
   if (video_.stream_index < 0 || audio_.stream_index < 0) {
     std::string err_msg;
     if (video_.stream_index < 0) {
       err_msg +=
-          "Could not find " + std::string(av_get_media_type_string(AVMEDIA_TYPE_VIDEO)) + " stream in {}." + url_;
+          "Could not find " + std::string(av_get_media_type_string(AVMEDIA_TYPE_VIDEO)) + " stream in " + url_;
     }
     if (audio_.stream_index < 0) {
       err_msg += "Could not find " + std::string(av_get_media_type_string(AVMEDIA_TYPE_AUDIO)) + " stream in " + url_;

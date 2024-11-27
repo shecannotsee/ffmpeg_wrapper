@@ -9,17 +9,17 @@ extern "C" {
 void draw(const AVFrame* frame, int x1, int y1, int x2, int y2, const std::string& color_name, const int thickness) {
   const color draw_color = get_color(color_name);
 
-  // YUV420P格式的宽度和高度
+  // Width and height of YUV420P format
   const int width  = frame->width;
   const int height = frame->height;
 
-  // 限制坐标在图像边界内
+  // Constrain coordinates to be within the image boundaries
   x1 = std::max(0, std::min(x1, width - 1));
   x2 = std::max(0, std::min(x2, width - 1));
   y1 = std::max(0, std::min(y1, height - 1));
   y2 = std::max(0, std::min(y2, height - 1));
 
-  // 获取Y、U和V分量数据
+  // Get Y, U and V component data
   uint8_t* y_plane = frame->data[0];
   uint8_t* u_plane = frame->data[1];
   uint8_t* v_plane = frame->data[2];
@@ -28,7 +28,7 @@ void draw(const AVFrame* frame, int x1, int y1, int x2, int y2, const std::strin
   const int u_line_size = frame->linesize[1];
   const int v_line_size = frame->linesize[2];
 
-  // 绘制顶部和底部边框
+  // Draw the top and bottom borders
   for (int x = x1; x <= x2; ++x) {
     for (int t = 0; t < thickness; ++t) {
       if (y1 - t >= 0) {
@@ -48,7 +48,7 @@ void draw(const AVFrame* frame, int x1, int y1, int x2, int y2, const std::strin
     }
   }
 
-  // 绘制左侧和右侧边框
+  // Draw the left and right borders
   for (int y = y1; y <= y2; ++y) {
     for (int t = 0; t < thickness; ++t) {
       if (x1 - t >= 0) {
@@ -82,32 +82,32 @@ void draw_rectangle_nv12(
 
   const color draw_color = get_color(color_name);
 
-  // NV12格式的宽度和高度
+  // NV12 format width and height
   const int width  = frame->width;
   const int height = frame->height;
 
-  // 限制坐标在图像边界内
+  // Constrain coordinates to be within the image boundaries
   x1 = std::max(0, std::min(x1, width - 1));
   x2 = std::max(0, std::min(x2, width - 1));
   y1 = std::max(0, std::min(y1, height - 1));
   y2 = std::max(0, std::min(y2, height - 1));
 
-  // 获取Y、U和V分量数据
+  // Get Y, U and V component data
   uint8_t* y_plane  = frame->data[0];
   uint8_t* uv_plane = frame->data[1];
 
   int y_line_size  = frame->linesize[0];
   int uv_line_size = frame->linesize[1];
 
-  // 绘制顶部和底部边框
+  // Draw the top and bottom borders
   for (int x = x1; x <= x2; ++x) {
     for (int t = 0; t < thickness; ++t) {
       if (y1 - t >= 0) {
         y_plane[(y1 - t) * y_line_size + x] = draw_color.y;
 
-        // 设置U和V分量，注意每两个像素共享一个UV值
+        // Set the U and V components, note that every two pixels share a UV value
         if (x % 2 == 0) {
-          int uv_index           = (y1 - t) / 2 * uv_line_size + x;  // NV12格式: U 和 V 交替存储
+          int uv_index           = (y1 - t) / 2 * uv_line_size + x;  // NV12 format: U and V are stored alternately
           uv_plane[uv_index]     = draw_color.u;
           uv_plane[uv_index + 1] = draw_color.v;
         }
@@ -123,7 +123,7 @@ void draw_rectangle_nv12(
     }
   }
 
-  // 绘制左侧和右侧边框
+  // Draw the left and right borders
   for (int y = y1; y <= y2; ++y) {
     for (int t = 0; t < thickness; ++t) {
       if (x1 - t >= 0) {
@@ -146,12 +146,17 @@ void draw_rectangle_nv12(
   }
 }
 
-// 绘制线段的辅助函数
-void draw_line_nv12(const AVFrame* frame, int x1, int y1, int x2, int y2, const std::string& color_name, const int thickness) {
-  color draw_color = get_color(color_name);
+void draw_line_nv12(const AVFrame* frame,
+                    int x1,
+                    int y1,
+                    const int x2,
+                    const int y2,
+                    const std::string& color_name,
+                    const int thickness) {
+  const color draw_color = get_color(color_name);
 
-  int width  = frame->width;
-  int height = frame->height;
+  const int width  = frame->width;
+  const int height = frame->height;
 
   uint8_t* y_plane  = frame->data[0];
   uint8_t* uv_plane = frame->data[1];
@@ -159,7 +164,7 @@ void draw_line_nv12(const AVFrame* frame, int x1, int y1, int x2, int y2, const 
   int y_line_size  = frame->linesize[0];
   int uv_line_size = frame->linesize[1];
 
-  // 使用 Bresenham 算法绘制线段
+  // Draw a line segment using Bresenham's algorithm
   int dx  = std::abs(x2 - x1);
   int dy  = std::abs(y2 - y1);
   int sx  = (x1 < x2) ? 1 : -1;
@@ -167,7 +172,7 @@ void draw_line_nv12(const AVFrame* frame, int x1, int y1, int x2, int y2, const 
   int err = dx - dy;
 
   while (true) {
-    // 限制坐标在图像边界内
+    // Constrain coordinates to be within the image boundaries
     if (x1 >= 0 && x1 < width && y1 >= 0 && y1 < height) {
       for (int t = 0; t < thickness; ++t) {
         int yt = y1 + t;
@@ -196,7 +201,10 @@ void draw_line_nv12(const AVFrame* frame, int x1, int y1, int x2, int y2, const 
   }
 }
 
-void draw_area_nv12(AVFrame* frame, std::vector<point> area, const std::string& color_name, int thickness) {
+void draw_area_nv12(AVFrame* frame,
+                    const std::vector<point>& area,
+                    const std::string& color_name,
+                    const int thickness) {
   const auto format = static_cast<enum AVPixelFormat>(frame->format);
 
   if (frame->format != AV_PIX_FMT_NV12) {
@@ -213,7 +221,7 @@ void draw_area_nv12(AVFrame* frame, std::vector<point> area, const std::string& 
     throw std::runtime_error("A polygon requires at least 3 points");
   }
 
-  // 绘制多边形的边
+  // Draw the edges of the polygon
   for (int i = 0; i < num_points; ++i) {
     int x1 = static_cast<int>(std::round(area[i].x));
     int y1 = static_cast<int>(std::round(area[i].y));
@@ -224,7 +232,8 @@ void draw_area_nv12(AVFrame* frame, std::vector<point> area, const std::string& 
   }
 }
 
-void draw_digit_nv12(AVFrame* frame, int x, int y, int digit, const std::string& color_name, int thickness) {
+void draw_digit_nv12(
+    AVFrame* frame, int x, int y, const int digit, const std::string& color_name, const int thickness) {
   if (x % 2 != 0) x += 1;
   if (y % 2 != 0) y += 1;
   // 10-20-15,6-12-10
@@ -240,10 +249,10 @@ void draw_digit_nv12(AVFrame* frame, int x, int y, int digit, const std::string&
     int y;
   } TL{0, 0}, TR{xm, 0}, ML{0, ym / 2}, MR{xm, ym / 2}, BL{0, ym}, BR{xm, ym};
 
-  // 保证不会越界
-  int max_x = frame->width - xm;   // x 最大值
-  int max_y = frame->height - ym;  // y 最大值
-  // 限制 x 和 y 在合法范围内
+  // Make sure you don't cross the line
+  const int max_x = frame->width - xm;
+  const int max_y = frame->height - ym;
+  // Limit x and y to the legal range
   if (x < 0) x = 0;
   if (y < 0) y = 0;
   if (x > max_x) x = max_x;
@@ -319,11 +328,11 @@ void draw_digit_nv12(AVFrame* frame, int x, int y, int digit, const std::string&
       return;
     }
     default:
-      // 使用递归处理多位数，横向偏移default_x_offset个单位
+      // Use recursion to process multi-digit numbers, horizontally offset by default_x_offset units
       std::string digits = std::to_string(digit);
       int offset         = 0;
-      for (char c : digits) {
-        int current_digit = c - '0';  // 将字符转换为整数
+      for (const char c : digits) {
+        const int current_digit = c - '0';  // Convert a character to an integer
         draw_digit_nv12(frame, x + offset, y, current_digit, color_name, thickness);
         offset += default_x_offset;
       }
@@ -331,7 +340,8 @@ void draw_digit_nv12(AVFrame* frame, int x, int y, int digit, const std::string&
   }
 }
 
-void draw_letter_nv12(AVFrame* frame, int x, int y, char letter, const std::string& color_name, int thickness) {
+void draw_letter_nv12(
+    const AVFrame* frame, int x, int y, const char letter, const std::string& color_name, const int thickness) {
   if (x % 2 != 0) x += 1;
   if (y % 2 != 0) y += 1;
 
@@ -490,7 +500,7 @@ void draw_letter_nv12(AVFrame* frame, int x, int y, char letter, const std::stri
       draw_line_nv12(frame, 0 + x, 24 + y, 12 + x, 24 + y, color_name, thickness);
       return;
     default:
-      std::string error_message = "Not support letter: " + std::string(1, letter);
+      const std::string error_message = "Not support letter: " + std::string(1, letter);
       throw std::runtime_error(error_message);
   }
 }

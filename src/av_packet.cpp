@@ -21,7 +21,6 @@ av_packet::~av_packet() {
   }
 }
 
-// 拷贝构造函数
 av_packet::av_packet(const av_packet& other) noexcept : pkt_(nullptr) {
   if (other.pkt_) {
     pkt_ = av_packet_clone(other.pkt_);
@@ -31,15 +30,13 @@ av_packet::av_packet(const av_packet& other) noexcept : pkt_(nullptr) {
   }
 }
 
-// 移动构造函数
 av_packet::av_packet(av_packet&& other) noexcept : pkt_(other.pkt_) {
-  other.pkt_ = nullptr;  // 使原对象失去所有权
+  other.pkt_ = nullptr;  // Invalidate the original object
 }
 
-// 拷贝赋值操作符
 av_packet& av_packet::operator=(const av_packet& other) noexcept {
   if (this != &other) {
-    av_packet_free(&pkt_);  // 释放当前的 AVPacket
+    av_packet_free(&pkt_);  // Free the current AVPacket
     if (other.pkt_) {
       pkt_ = av_packet_clone(other.pkt_);
       if (!pkt_) {
@@ -50,12 +47,11 @@ av_packet& av_packet::operator=(const av_packet& other) noexcept {
   return *this;
 }
 
-// 移动赋值操作符
 av_packet& av_packet::operator=(av_packet&& other) noexcept {
   if (this != &other) {
-    av_packet_free(&pkt_);    // 释放当前的 AVPacket
-    pkt_       = other.pkt_;  // 转移所有权
-    other.pkt_ = nullptr;     // 使原对象失去所有权
+    av_packet_free(&pkt_);    // Free the current AVPacket
+    pkt_       = other.pkt_;  // Transfer ownership
+    other.pkt_ = nullptr;     // Invalidate the original object
   }
   return *this;
 }

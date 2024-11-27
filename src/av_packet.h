@@ -7,81 +7,77 @@ extern "C" {
 
 /**
  * @class av_packet
- * @brief FFmpeg 的 AVPacket 封装类。
+ * @brief Wrapper class for FFmpeg's AVPacket.
  *
- * 该类管理 AVPacket 的生命周期，包括资源的分配和释放。
+ * This class manages the lifecycle of an AVPacket, including memory allocation and deallocation.
  */
 class av_packet {
-  AVPacket* pkt_;  ///< 指向 AVPacket 结构体的指针。
+  AVPacket* pkt_;  ///< Pointer to the AVPacket structure.
 
  public:
   /**
-   * @brief 构造 av_packet 对象并分配 AVPacket。
+   * @brief Constructor that allocates an AVPacket.
    *
-   * 如果分配失败，将抛出 std::runtime_error 异常。
+   * If allocation fails, a std::runtime_error exception is thrown.
    */
   av_packet() noexcept;
 
   /**
-   * @brief 通过原始 AVPacket 构建对象
-   * @param pkt 传入指针, 构造后该指针将置为空
-   *
+   * @brief Constructs the object using an existing AVPacket.
+   * @param pkt Pointer to an existing AVPacket. The pointer will be set to nullptr after the construction.
    */
   explicit av_packet(AVPacket*& pkt) noexcept;
 
   /**
-   * @brief 析构函数，释放已分配的 AVPacket。
+   * @brief Destructor that frees the allocated AVPacket.
    */
   ~av_packet();
 
   /**
-   * @brief 拷贝构造函数。
+   * @brief Copy constructor.
    *
-   * 此构造函数用于创建一个新的 av_packet 对象，该对象是另一个 av_packet 对象的副本。
+   * This constructor creates a new av_packet object as a copy of another av_packet object.
    *
-   * @param other 要复制的 av_packet 对象。
-   *
-   * @throw std::runtime_error 如果 AVPacket 的克隆失败，则抛出此异常。
+   * @param other The av_packet object to copy.
+   * @throw std::runtime_error If cloning the AVPacket fails, this exception is thrown.
    */
   av_packet(const av_packet& other) noexcept;
 
   /**
-   * @brief 移动构造函数。
+   * @brief Move constructor.
    *
-   * 此构造函数用于转移另一个 av_packet 对象的资源，避免不必要的深拷贝。
+   * This constructor transfers resources from another av_packet object to the current one, avoiding unnecessary deep
+   * copies.
    *
-   * @param other 要移动的 av_packet 对象。移动后，该对象的状态将被设置为无效。
+   * @param other The av_packet object to move. After moving, the state of the original object will be invalid.
    */
   av_packet(av_packet&& other) noexcept;
 
   /**
-   * @brief 拷贝赋值操作符。
+   * @brief Copy assignment operator.
    *
-   * 此操作符用于将一个 av_packet 对象的内容复制到当前对象。
+   * This operator copies the contents of one av_packet object into the current object.
    *
-   * @param other 要复制的 av_packet 对象。
-   *
-   * @return 返回当前对象的引用。
-   *
-   * @throw std::runtime_error 如果 AVPacket 的克隆失败，则抛出此异常。
+   * @param other The av_packet object to copy.
+   * @return A reference to the current object.
+   * @throw std::runtime_error If cloning the AVPacket fails, this exception is thrown.
    */
   av_packet& operator=(const av_packet& other) noexcept;
 
   /**
-   * @brief 移动赋值操作符。
+   * @brief Move assignment operator.
    *
-   * 此操作符用于将一个 av_packet 对象的资源转移到当前对象。
+   * This operator transfers the resources of one av_packet object to the current object.
    *
-   * @param other 要移动的 av_packet 对象。移动后，该对象的状态将被设置为无效。
-   *
-   * @return 返回当前对象的引用。
+   * @param other The av_packet object to move. After moving, the state of the original object will be invalid.
+   * @return A reference to the current object.
    */
   av_packet& operator=(av_packet&& other) noexcept;
 
   /**
-   * @brief 获取底层 AVPacket 的指针。
+   * @brief Gets the pointer to the underlying AVPacket.
    *
-   * @return 指向 AVPacket 结构体的指针。
+   * @return A pointer to the AVPacket structure.
    */
   auto get() -> AVPacket* {
     return pkt_;

@@ -12,32 +12,32 @@ extern "C" {
 #include <unordered_map>
 
 /**
- * @brief 颜色结构体，用于存储 RGB 和 YUV 分量。
+ * @brief Color structure for storing RGB and YUV components.
  */
 struct color {
   union {
     struct {
-      uint8_t r;  ///< 红色分量 (0-255)
-      uint8_t g;  ///< 绿色分量 (0-255)
-      uint8_t b;  ///< 蓝色分量 (0-255)
+      uint8_t r;  ///< Red component (0-255)
+      uint8_t g;  ///< Green component (0-255)
+      uint8_t b;  ///< Blue component (0-255)
     };
     struct {
-      uint8_t y;  ///< Y 分量 (亮度)
-      uint8_t u;  ///< U 分量 (色度)
-      uint8_t v;  ///< V 分量 (色度)
+      uint8_t y;  ///< Y component (luminance)
+      uint8_t u;  ///< U component (chrominance)
+      uint8_t v;  ///< V component (chrominance)
     };
   };
 };
 
 /**
- * @brief 将 RGB 颜色转换为 YUV 颜色。
+ * @brief Converts RGB color to YUV color.
  *
- * @param rgb 输入的 RGB 颜色结构体。
- * @return 转换后的 YUV 颜色结构体。
+ * @param rgb The input RGB color structure.
+ * @return The converted YUV color structure.
  */
 constexpr color rgb_to_yuv(const color rgb) {
   color yuv{};
-  // 需要将 RGB 分量转换为浮点数进行计算
+  // Convert RGB components to float for calculation
   const float r = rgb.r;
   const float g = rgb.g;
   const float b = rgb.b;
@@ -49,11 +49,10 @@ constexpr color rgb_to_yuv(const color rgb) {
 }
 
 /**
- * @brief 根据颜色名称获取对应的颜色。
+ * @brief Retrieves the corresponding color based on the color name.
  *
- * @param color_name 颜色名称，支持的名称包括 "red", "orange", "yellow", "green", "cyan", "blue", "purple", "white",
- * "black"。
- * @return 对应的 YUV 颜色结构体，如果未找到，则返回红色 (255, 0, 0)。
+ * @param color_name The name of the color. Supported names are "red", "orange", "yellow", "green", "cyan", "blue", "purple", "white", "black".
+ * @return The corresponding YUV color structure. If not found, returns red (255, 0, 0).
  */
 static color get_color(const std::string& color_name) {
   static std::unordered_map<std::string, color> color_map = {
@@ -68,58 +67,87 @@ static color get_color(const std::string& color_name) {
       {"black", rgb_to_yuv({0, 0, 0})},        // YUV{  0, 128, 128} RGB {  0,   0,   0}
   };
   const auto it = color_map.find(color_name);
-  return (it != color_map.end()) ? it->second : color{255, 0, 0};  // 默认红色
+  return (it != color_map.end()) ? it->second : color{255, 0, 0};  // Default to red if not found
 }
 
 /**
- * @brief 在给定的 AVFrame 上绘制矩形边框。
+ * @brief Draws a rectangle border on the given AVFrame.
  *
- * @param frame 指向要绘制的 AVFrame 的指针。
- * @param x1 矩形左上角 x 坐标。
- * @param y1 矩形左上角 y 坐标。
- * @param x2 矩形右下角 x 坐标。
- * @param y2 矩形右下角 y 坐标。
- * @param color_name 边框的颜色名称。
- * @param thickness 边框的厚度，默认为 4。
+ * @param frame Pointer to the AVFrame to draw on.
+ * @param x1 The x-coordinate of the top-left corner of the rectangle.
+ * @param y1 The y-coordinate of the top-left corner of the rectangle.
+ * @param x2 The x-coordinate of the bottom-right corner of the rectangle.
+ * @param y2 The y-coordinate of the bottom-right corner of the rectangle.
+ * @param color_name The color name for the border.
+ * @param thickness The thickness of the border, default is 4.
  */
 void draw(const AVFrame* frame, int x1, int y1, int x2, int y2, const std::string& color_name, int thickness = 4);
 
 /**
- * @brief 在 NV12 格式的帧上绘制矩形边框。
+ * @brief Draws a rectangle border on a NV12 format frame.
  *
- * @param frame 指向要绘制矩形的 AVFrame 结构体指针，必须为 NV12 格式。
- * @param x1 矩形左上角的 x 坐标。
- * @param y1 矩形左上角的 y 坐标。
- * @param x2 矩形右下角的 x 坐标。
- * @param y2 矩形右下角的 y 坐标。
- * @param color_name 颜色名称，支持的名称包括 "red", "orange", "yellow", "green", "cyan", "blue", "purple", "white",
- * "black"。
- * @param thickness 边框的厚度，默认值为 4。
+ * @param frame Pointer to the AVFrame to draw the rectangle on, must be in NV12 format.
+ * @param x1 The x-coordinate of the top-left corner of the rectangle.
+ * @param y1 The y-coordinate of the top-left corner of the rectangle.
+ * @param x2 The x-coordinate of the bottom-right corner of the rectangle.
+ * @param y2 The y-coordinate of the bottom-right corner of the rectangle.
+ * @param color_name The color name for the rectangle, supported names are "red", "orange", "yellow", "green", "cyan", "blue", "purple", "white", "black".
+ * @param thickness The thickness of the rectangle border, default is 4.
  *
- * @throws std::runtime_error 如果提供的 AVFrame 格式不是 NV12。
+ * @throws std::runtime_error If the provided AVFrame format is not NV12.
  *
- * @note 此函数将直接修改输入帧的 Y、U 和 V 数据以绘制指定颜色的矩形边框。
- *       请确保在调用该函数之前，AVFrame 已经正确初始化并且数据指针有效。
+ * @note This function directly modifies the Y, U, and V data of the input frame to draw the specified colored rectangle border.
+ *       Ensure the AVFrame is properly initialized and its data pointers are valid before calling this function.
  */
 void draw_rectangle_nv12(
     AVFrame* frame, int x1, int y1, int x2, int y2, const std::string& color_name, int thickness = 4);
 
 /**
- * @brief
- * @param frame
- * @param x1 一定要为偶数
- * @param y1
- * @param x2
- * @param y2
- * @param color_name
- * @param thickness
+ * @brief Draws a line on a NV12 format frame.
+ *
+ * @param frame Pointer to the AVFrame to draw the line on.
+ * @param x1 The x-coordinate of the starting point of the line. This must be an even number.
+ * @param y1 The y-coordinate of the starting point of the line.
+ * @param x2 The x-coordinate of the ending point of the line.
+ * @param y2 The y-coordinate of the ending point of the line.
+ * @param color_name The color name for the line.
+ * @param thickness The thickness of the line, default is 4.
  */
 void draw_line_nv12(const AVFrame* frame, int x1, int y1, int x2, int y2, const std::string& color_name, int thickness = 4);
 
-void draw_area_nv12(AVFrame* frame, std::vector<point> area, const std::string& color_name, int thickness = 4);
+/**
+ * @brief Draws an area (polygon) on a NV12 format frame.
+ *
+ * @param frame Pointer to the AVFrame to draw the area on.
+ * @param area A vector of points that defines the area.
+ * @param color_name The color name for the area.
+ * @param thickness The thickness of the border, default is 4.
+ */
+void draw_area_nv12(AVFrame* frame, const std::vector<point>& area, const std::string& color_name, int thickness = 4);
 
+/**
+ * @brief Draws a digit on a NV12 format frame.
+ *
+ * @param frame Pointer to the AVFrame to draw the digit on.
+ * @param x The x-coordinate to start drawing the digit.
+ * @param y The y-coordinate to start drawing the digit.
+ * @param digit The digit to draw.
+ * @param color_name The color name for the digit.
+ * @param thickness The thickness of the digit lines, default is 1.
+ */
 void draw_digit_nv12(AVFrame* frame, int x, int y, int digit, const std::string& color_name, int thickness = 1);
 
-void draw_letter_nv12(AVFrame* frame, int x, int y, char letter, const std::string& color_name, int thickness = 1);
+/**
+ * @brief Draws a letter on a NV12 format frame.
+ *
+ * @param frame Pointer to the AVFrame to draw the letter on.
+ * @param x The x-coordinate to start drawing the letter.
+ * @param y The y-coordinate to start drawing the letter.
+ * @param letter The letter to draw.
+ * @param color_name The color name for the letter.
+ * @param thickness The thickness of the letter lines, default is 1.
+ */
+void draw_letter_nv12(
+    const AVFrame* frame, int x, int y, char letter, const std::string& color_name, int thickness = 1);
 
 #endif  // FFMPEG_WRAPPER_DRAW_ON_AVFRAME_H

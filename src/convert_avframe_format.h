@@ -4,45 +4,47 @@
 #include "av_frame.h"
 
 /**
- * @brief 将 NV12 格式的 AVFrame 转换为 YUV420P 格式。
+ * @brief Converts an NV12 formatted AVFrame to YUV420P format.
  *
- * 此函数接收一个 NV12 格式的 AVFrame 作为输入，并将其转换为 YUV420P 格式，
- * 该格式在视频处理中常用。Y、Cb 和 Cr 平面将被处理以生成新的帧。
+ * This function takes an NV12 formatted AVFrame as input and converts it to the YUV420P format,
+ * which is commonly used in video processing. The Y, Cb, and Cr planes will be processed to
+ * generate a new frame.
  *
- * @param nv12 输入的 NV12 格式 AVFrame。该帧将在转换完成后被替换为
- *              转换后的 YUV420P 格式帧。
+ * @param nv12 The input AVFrame in NV12 format. The frame will be replaced with the
+ *             converted YUV420P formatted frame after the conversion.
  *
- * @note 输入 AVFrame 的尺寸必须与输出 AVFrame 的尺寸匹配。
- *       函数假设输入的 NV12 帧已正确分配并且具有有效的数据。
- *       同时，它还会为输出的 YUV420P 帧分配缓冲区空间。
+ * @note The input AVFrame's size must match the output AVFrame's size.
+ *       The function assumes the input NV12 frame is correctly allocated and has valid data.
+ *       It will also allocate buffer space for the output YUV420P frame.
  *
- * @warning 调用者必须确保输入的 AVFrame 不是 NULL，并且宽度和高度有效。
+ * @warning The caller must ensure that the input AVFrame is not NULL, and that the width and height are valid.
  *
- * @pre 输入的 AVFrame 应为 NV12 格式，并具有适当的行大小。
+ * @pre The input AVFrame should be in NV12 format and have appropriate strides (linesizes).
  *
- * @post 输入的 AVFrame 被修改为包含 YUV420P 格式的数据。
+ * @post The input AVFrame is modified to contain YUV420P format data.
  *
- * @throw std::runtime_error 如果输入的 AVFrame 格式不是 NV12。
+ * @throw std::runtime_error If the input AVFrame is not in NV12 format.
  */
 void nv12_to_yuv420p(av_frame& nv12);
 
 /**
- * @brief 将 YUV420P 帧转换为 NV12 帧。
+ * @brief Converts a YUV420P frame to NV12 format.
  *
- * 此函数接受一个 YUV420P 帧作为输入，并将其转换为 NV12 格式。
- * 输入的 YUV420P 帧必须为 AV_PIX_FMT_YUV420P 格式。如果提供的帧
- * 格式不同，则会抛出运行时错误。
+ * This function takes a YUV420P formatted frame as input and converts it to NV12 format.
+ * The input YUV420P frame must be in AV_PIX_FMT_YUV420P format. If the provided frame
+ * format is different, a runtime error will be thrown.
  *
- * @param[in,out] yuv420p 输入的 YUV420P 帧，将被转换后的 NV12 帧覆盖。
+ * @param[in,out] yuv420p The input YUV420P frame, which will be overwritten by the
+ *                       converted NV12 frame.
  *
- * @throw std::runtime_error 如果输入帧的像素格式不是
- *                            AV_PIX_FMT_YUV420P。
+ * @throw std::runtime_error If the input frame's pixel format is not
+ *                            AV_PIX_FMT_YUV420P.
  *
- * 转换过程包括：
- * 1. 直接复制 Y 平面。
- * 2. 将 Cb 和 Cr 平面交错到 NV12 格式中。
+ * The conversion process involves:
+ * 1. Directly copying the Y plane.
+ * 2. Interleaving the Cb and Cr planes into the NV12 format.
  *
- * 在转换之前，会分配 NV12 帧的内存并将其标记为可写。
+ * Before conversion, memory for the NV12 frame will be allocated and marked as writable.
  */
 void yuv420p_to_nv12(av_frame& yuv420p);
 

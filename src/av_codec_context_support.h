@@ -8,102 +8,134 @@ extern "C" {
 }
 
 /**
- * @brief 支持 AVCodecContext 的类
+ * @class av_codec_context_support
+ * @brief A class to support AVCodecContext management
  *
- * 此类用于管理 ffmpeg 的编码上下文（AVCodecContext），提供编码参数的设置和获取功能。
- * 它支持对编解码器的初始化、释放及参数配置，适用于音视频流的处理。
+ * This class is used to manage the ffmpeg encoding context (AVCodecContext),
+ * providing functionality for setting and getting encoding parameters.
+ * It supports initialization, releasing, and parameter configuration of
+ * the codec context, suitable for handling audio and video streams.
  */
 class av_codec_context_support {
-  AVCodecContext* ctx_;  ///< 编码上下文
+  AVCodecContext* ctx_;  ///< Pointer to the codec context
 
  public:
   /**
-   * @brief 默认构造函数
+   * @brief Default constructor
    *
-   * 初始化编码上下文和日志记录器。
+   * Initializes the codec context and logger.
    */
   av_codec_context_support() noexcept;
 
   /**
-   * @brief 默认析构函数
+   * @brief Default destructor
    *
-   * 释放编码上下文的资源。
+   * Releases the codec context and associated resources.
    */
   ~av_codec_context_support() noexcept;
 
  private:
   /**
-   * @brief 分配默认编码上下文
+   * @brief Allocates a default codec context
    *
-   * 该方法会分配一个默认的 AVCodecContext。
+   * This method allocates a default AVCodecContext.
    *
-   * @note 此方法将在分配失败时记录错误信息，并终止程序执行。
+   * @note This method logs an error message and terminates the program if
+   * the allocation fails.
    */
   void alloc_default() noexcept;
 
   /**
-   * @brief 分配默认编码上下文并指定编解码器 ID
+   * @brief Allocates a default codec context with a specific codec ID
    *
-   * 根据给定的编解码器 ID，分配一个默认的 AVCodecContext。
+   * This method allocates a default AVCodecContext for a given codec ID.
    *
-   * @param id 编解码器的 ID，使用 `AVCodecID` 枚举指定所需的编码器
-   * @throw std::terminate 如果分配编码上下文失败，将导致程序终止
+   * @param id The codec ID, specified by the `AVCodecID` enum for the desired encoder.
+   * @throw std::terminate If the codec context allocation fails, the program terminates.
    *
-   * @note 此方法将在分配失败时记录错误信息，并终止程序执行。
+   * @note This method logs an error message and terminates the program if
+   * the allocation fails.
    */
   void alloc_default(enum AVCodecID id) noexcept;
 
+  /**
+   * @brief Allocates a default codec context by codec name
+   *
+   * This method allocates a default AVCodecContext using a specific codec name.
+   *
+   * @param codec_name The name of the codec.
+   * @throw std::terminate If the codec context allocation fails, the program terminates.
+   */
   void alloc_default(const std::string& codec_name) noexcept;
 
   /**
-   * @brief 释放编码上下文
+   * @brief Releases the codec context
    *
-   * 该方法会释放当前的编码上下文，防止内存泄漏。
+   * This method releases the current codec context to prevent memory leaks.
    */
   void release() noexcept;
 
  public:
   /**
-   * @brief 获取编码上下文指针
+   * @brief Gets the current codec context pointer
    *
-   * @return 指向当前编码上下文的指针
+   * @return A pointer to the current codec context.
    */
   [[nodiscard]] auto get() const noexcept -> const AVCodecContext* {
     return ctx_;
   }
 
   /**
-   * @brief 添加编解码参数到编码上下文
+   * @brief Adds codec parameters to the codec context
    *
-   * 根据指定的数据包类型，从 demux 对象中获取编解码参数，并应用到编码上下文。
+   * This method retrieves codec parameters from a demux object based on
+   * the specified packet type and applies them to the codec context.
    *
-   * @tparam t 数据包类型，支持类型包括 `demux::type::video` 和 `demux::type::audio`
-   * @param stream 输入的 demux 对象
-   * @return 返回配置后的编码上下文指针
-   * @throw std::runtime_error 如果无法获取编解码参数或发生其他错误
+   * @tparam t The packet type. Supported types are `demux::type::video` and `demux::type::audio`.
+   * @param stream The input demux object containing codec parameters.
+   * @return A pointer to the configured codec context.
+   * @throw std::runtime_error If codec parameters cannot be retrieved or other errors occur.
    */
   template <demux::type t>
   [[nodiscard]] auto add_avcodec_parameters(const demux& stream) -> const AVCodecContext* {
-      release();
-      alloc_default();
-      auto codec_params = stream.get_codec_parameters<t>();
-      avcodec_parameters_to_context(ctx_, codec_params);
-      return ctx_;
-    }
+    release();
+    alloc_default();
+    auto codec_params = stream.get_codec_parameters<t>();
+    avcodec_parameters_to_context(ctx_, codec_params);
+    return ctx_;
+  }
 
-    /**
-     * @brief 获取 JPEG 编码上下文
-     *
-     * 初始化编码上下文以支持 JPEG 编码，并设置相关参数。
-     *
-     * @param width 编码图像的宽度
-     * @param height 编码图像的高度
-     * @return 返回配置后的编码上下文指针
-     */
+  /**
+   * @brief Gets a codec context configured for JPEG encoding
+   *
+   * Initializes the codec context to support JPEG encoding and sets related parameters.
+   *
+   * @param width The width of the image to encode.
+   * @param height The height of the image to encode.
+   * @return A pointer to the configured codec context for JPEG encoding.
+   */
   auto get_jpeg_encode(int width, int height) noexcept -> const AVCodecContext*;
 
+  /**
+   * @brief Gets a codec context configured for H.264 encoding using NVENC
+   *
+   * Initializes the codec context for H.264 encoding with NVENC hardware acceleration
+   * based on the codec parameters from the demux stream.
+   *
+   * @param stream The demux object containing codec parameters.
+   * @return A pointer to the configured codec context for H.264 NVENC encoding.
+   */
   auto get_h264_nvenc_encode(const demux& stream) noexcept -> const AVCodecContext*;
 
+  /**
+   * @brief Gets a codec context configured for H.264 encoding
+   *
+   * Initializes the codec context for H.264 encoding based on the codec parameters
+   * from the demux stream.
+   *
+   * @param stream The demux object containing codec parameters.
+   * @return A pointer to the configured codec context for H.264 encoding.
+   */
   auto get_h264_encode(const demux& stream) noexcept -> const AVCodecContext*;
 };
 
