@@ -4,22 +4,23 @@
 #include <vector>
 
 /**
- * @brief 表示二维平面上点的结构体
+ * @brief Represents a point in a 2D plane.
  *
- * 该结构体定义了二维平面上的一个点，用x和y表示坐标。
+ * This struct defines a point in a 2D plane using x and y coordinates.
  */
 struct point {
-  float x;  ///< 点的x坐标
-  float y;  ///< 点的y坐标
+  float x;  ///< The x-coordinate of the point.
+  float y;  ///< The y-coordinate of the point.
 };
 
 /**
- * @brief 表示多边形区域的结构体
+ * @brief Represents a polygonal area.
  *
- * 该结构体使用点的集合来表示一个区域，可以用于指定检测或分析的特定区域。
+ * This struct represents an area using a collection of points, which can be used
+ * to specify a region for detection or analysis.
  */
 struct area {
-  std::vector<point> points;  ///< 构成区域的顶点集合
+  std::vector<point> points;  ///< A collection of points that define the area.
 };
 
 #endif  // FFMPEG_WRAPPER_FRAME_SUPPORT_H
