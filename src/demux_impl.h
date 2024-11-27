@@ -37,7 +37,7 @@ template <demux::type t>
       pkt_type = pkt.get()->stream_index == audio_.stream_index ? type::audio : type::video;
     }
     // Added when data is not corrupted
-    if (!pkt.get()->flags & AV_PKT_FLAG_CORRUPT) {
+    if (!(pkt.get()->flags & AV_PKT_FLAG_CORRUPT)) {
       static type_av_packet tmp;
       tmp = type_av_packet({pkt_type, pkt});
       pkt_list.emplace_back(tmp);  // 拷贝构造
