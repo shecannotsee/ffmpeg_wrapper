@@ -11,13 +11,18 @@ extern "C" {
 
 #include "av_packet.h"
 
+/**
+ * @brief Represents a stream parameter for demuxing.
+ *
+ * This struct holds a key-value pair for a specific stream parameter and its associated flag.
+ */
 struct stream_param {
-  std::string key;
-  std::string value;
-  int flag;
+  std::string key;   ///< The key representing the stream parameter.
+  std::string value; ///< The value associated with the stream parameter.
+  int flag;          ///< An optional flag associated with the parameter.
 };
 
-/**
+ /**
  * @brief A class for handling audio and video demuxing.
  *
  * This class uses FFmpeg to demux audio and video streams. It can open media files and retrieve packets of specified types.
