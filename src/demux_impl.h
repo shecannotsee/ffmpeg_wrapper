@@ -17,7 +17,7 @@ template <demux::type t>
       } else {
         // 发生其他错误，抛出异常
         char err[AV_ERROR_MAX_STRING_SIZE] = {0};
-        std::string err_msg =
+        const std::string err_msg =
             "Error reading frame: " + std::string(av_make_error_string(err, AV_ERROR_MAX_STRING_SIZE, ret));
         throw std::runtime_error(err_msg);
       }
@@ -62,7 +62,7 @@ template <demux::type t>
   }
 }
 
-template <demux::demux::type t>
+template <demux::type t>
 [[nodiscard]] auto demux::get_codec_id() -> enum AVCodecID {
   auto codec_parameters = this->get_codec_parameters<t>();
   return codec_parameters->codec_id;
