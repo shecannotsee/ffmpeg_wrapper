@@ -18,3 +18,4 @@ export HTTPS_PROXY="https://127.0.0.1:7890"
 # get source code
 wget -P ./resource http://samples.mplayerhq.hu/V-codecs/h264/NeroAVC.mp4 || \
   { echo "wget failed"; exit 1; }
+ffmpeg -i ./resource/NeroAVC.mp4 -codec copy -bsf: h264_mp4toannexb -f h264 ./resource/test.h264
