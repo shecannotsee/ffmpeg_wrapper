@@ -2,10 +2,6 @@
 #define FFMPEG_WRAPPER_CONVERT_AVFRAME_FORMAT_H
 
 #include "av_frame.h"
-extern "C" {
-#include <libavutil/frame.h>
-#include <libswscale/swscale.h>
-}
 
 /**
  * @brief 将 NV12 格式的 AVFrame 转换为 YUV420P 格式。

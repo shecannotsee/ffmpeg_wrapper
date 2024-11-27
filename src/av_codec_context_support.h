@@ -1,8 +1,6 @@
 #ifndef FFMPEG_WRAPPER_AV_CODEC_CONTEXT_H
 #define FFMPEG_WRAPPER_AV_CODEC_CONTEXT_H
 
-#include <memory>
-
 #include "demux.h"
 
 extern "C" {
@@ -84,8 +82,8 @@ class av_codec_context_support {
    * @return 返回配置后的编码上下文指针
    * @throw std::runtime_error 如果无法获取编解码参数或发生其他错误
    */
-    template <demux::type t>
-    [[nodiscard]] auto add_avcodec_parameters(const demux& stream) -> const AVCodecContext* {
+  template <demux::type t>
+  [[nodiscard]] auto add_avcodec_parameters(const demux& stream) -> const AVCodecContext* {
       release();
       alloc_default();
       auto codec_params = stream.get_codec_parameters<t>();
@@ -102,7 +100,7 @@ class av_codec_context_support {
      * @param height 编码图像的高度
      * @return 返回配置后的编码上下文指针
      */
-    auto get_jpeg_encode(int width, int height) noexcept -> const AVCodecContext*;
+  auto get_jpeg_encode(int width, int height) noexcept -> const AVCodecContext*;
 
   auto get_h264_nvenc_encode(const demux& stream) noexcept -> const AVCodecContext*;
 

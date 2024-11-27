@@ -9,7 +9,7 @@ extern "C" {
 
 namespace {
 auto nv12_to_yuv420p_sample(AVFrame* nv12) -> AVFrame* {
-  auto format = (enum AVPixelFormat)nv12->format;
+  const auto format = static_cast<enum AVPixelFormat>(nv12->format);
 
   if (nv12->format != AV_PIX_FMT_NV12) {
     const std::string err_msg =
@@ -46,10 +46,10 @@ auto nv12_to_yuv420p_sample(AVFrame* nv12) -> AVFrame* {
 }
 }  // namespace
 void nv12_to_yuv420p(av_frame& nv12) {
-  auto format = (enum AVPixelFormat)nv12.get()->format;
+  const auto format = static_cast<enum AVPixelFormat>(nv12.get()->format);
 
   if (nv12.get()->format != AV_PIX_FMT_NV12) {
-    std::string err_msg =
+    const std::string err_msg =
         "Unsupported pixel format: " +
         std::string(av_get_pix_fmt_name(format) ? av_get_pix_fmt_name(format) : "Unknown pixel format");
     throw std::runtime_error(err_msg);
@@ -87,10 +87,10 @@ void nv12_to_yuv420p(av_frame& nv12) {
 
 namespace {
 auto yuv420p_to_nv12_sample(AVFrame* yuv420p) -> AVFrame* {
-  auto format = (enum AVPixelFormat)yuv420p->format;
+  const auto format = static_cast<enum AVPixelFormat>(yuv420p->format);
 
   if (yuv420p->format != AV_PIX_FMT_YUV420P) {
-    std::string err_msg =
+    const std::string err_msg =
         "Unsupported pixel format: " +
         std::string(av_get_pix_fmt_name(format) ? av_get_pix_fmt_name(format) : "Unknown pixel format");
     throw std::runtime_error(err_msg);
@@ -124,10 +124,10 @@ auto yuv420p_to_nv12_sample(AVFrame* yuv420p) -> AVFrame* {
 }
 }  // namespace
 void yuv420p_to_nv12(av_frame& yuv420p) {
-  auto format = (enum AVPixelFormat)yuv420p.get()->format;
+  const auto format = static_cast<enum AVPixelFormat>(yuv420p.get()->format);
 
   if (yuv420p.get()->format != AV_PIX_FMT_YUV420P) {
-    std::string err_msg =
+    const std::string err_msg =
         "Unsupported pixel format: " +
         std::string(av_get_pix_fmt_name(format) ? av_get_pix_fmt_name(format) : "Unknown pixel format");
     throw std::runtime_error(err_msg);

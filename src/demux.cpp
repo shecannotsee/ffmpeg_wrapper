@@ -42,7 +42,8 @@ void demux::open(const std::string &url, const demux::key_value_list &params) {
   }
 
   // 获取流信息: 方法1
-  bool find_video, find_audio = false;
+  bool find_video = false;
+  bool find_audio = false;
   for (unsigned int i = 0; i < fmt_ctx_->nb_streams; i++) {
     if (fmt_ctx_->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
       video_.stream_index = static_cast<int>(i);

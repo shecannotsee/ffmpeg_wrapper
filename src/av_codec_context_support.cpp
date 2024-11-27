@@ -13,7 +13,7 @@ void av_codec_context_support::alloc_default() noexcept {
   }
 }
 
-void av_codec_context_support::alloc_default(enum AVCodecID id) noexcept {
+void av_codec_context_support::alloc_default(const enum AVCodecID id) noexcept {
   const auto codec = avcodec_find_encoder(id);
   ctx_             = avcodec_alloc_context3(codec);
   if (!ctx_) {
@@ -23,8 +23,8 @@ void av_codec_context_support::alloc_default(enum AVCodecID id) noexcept {
 }
 
 void av_codec_context_support::alloc_default(const std::string& codec_name) noexcept {
-  auto codec = avcodec_find_encoder_by_name(codec_name.c_str());
-  ctx_       = avcodec_alloc_context3(codec);
+  const auto codec = avcodec_find_encoder_by_name(codec_name.c_str());
+  ctx_             = avcodec_alloc_context3(codec);
   if (!ctx_) {
     throw std::runtime_error("Could not allocate video codec context with " + codec_name);
   }
@@ -41,7 +41,7 @@ av_codec_context_support::~av_codec_context_support() noexcept {
   release();
 }
 
-auto av_codec_context_support::get_jpeg_encode(int width, int height) noexcept -> const AVCodecContext* {
+auto av_codec_context_support::get_jpeg_encode(const int width, const int height) noexcept -> const AVCodecContext* {
   release();
   alloc_default(AV_CODEC_ID_MJPEG);
   ctx_->bit_rate     = 400000;
@@ -58,7 +58,7 @@ auto av_codec_context_support::get_jpeg_encode(int width, int height) noexcept -
 }
 
 auto av_codec_context_support::get_h264_nvenc_encode(const demux& stream) noexcept -> const AVCodecContext* {
-  auto param = stream.get_codec_parameters<demux::type::video>();
+  const auto param = stream.get_codec_parameters<demux::type::video>();
   release();
   alloc_default("h264_nvenc");
   ctx_->bit_rate     = param->bit_rate;
@@ -75,7 +75,7 @@ auto av_codec_context_support::get_h264_nvenc_encode(const demux& stream) noexce
 }
 
 auto av_codec_context_support::get_h264_encode(const demux& stream) noexcept -> const AVCodecContext* {
-  auto param = stream.get_codec_parameters<demux::type::video>();
+  const auto param = stream.get_codec_parameters<demux::type::video>();
   release();
   alloc_default(AV_CODEC_ID_H264);
   ctx_->bit_rate     = param->bit_rate;

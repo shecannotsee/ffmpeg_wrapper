@@ -4,14 +4,13 @@
 #include <stdexcept>
 
 template <demux::type t>
-[[nodiscard]] auto demux::start_receiving(size_t num_packets) -> std::vector<type_av_packet> {
+[[nodiscard]] auto demux::start_receiving(const size_t num_packets) -> std::vector<type_av_packet> {
   std::vector<type_av_packet> pkt_list;
 
   av_packet pkt;
-  type pkt_type;
+  auto pkt_type = type::av;
   while (pkt_list.size() < num_packets) {
-    auto ret = av_read_frame(fmt_ctx_, pkt.get());
-    if (ret < 0) {
+    if (const auto ret = av_read_frame(fmt_ctx_, pkt.get()); ret < 0) {
       if (ret == AVERROR_EOF) {
         break;
       } else {

@@ -19,10 +19,10 @@ struct point {
  * 该结构体包含了检测框的坐标、置信度和分类信息，用于表示图像中的一个检测对象。
  */
 struct detection {
-  float x1;            ///< 检测框左上角的x坐标
-  float y1;            ///< 检测框左上角的y坐标
-  float x2;            ///< 检测框右下角的x坐标
-  float y2;            ///< 检测框右下角的y坐标
+  float x1{};          ///< 检测框左上角的x坐标
+  float y1{};          ///< 检测框左上角的y坐标
+  float x2{};          ///< 检测框右下角的x坐标
+  float y2{};          ///< 检测框右下角的y坐标
   float confidence;    ///< 检测框的置信度
   int class_id;        ///< 检测框的类别ID
   int tracker_id{-1};  ///< 跟踪器ID，用于标识跟踪目标
@@ -64,7 +64,7 @@ struct save_evidence_info {
   /**
    * @brief 向区域集合添加一个区域
    *
-   * @param parea 要添加的区域
+   * @param new_area 要添加的区域
    */
   void append_area(const area& new_area) {
     areas.emplace_back(new_area);

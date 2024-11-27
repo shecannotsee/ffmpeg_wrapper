@@ -77,7 +77,7 @@ class av_frame {
    *
    * @return 指向 AVFrame 结构体的指针。
    */
-  inline auto get() -> AVFrame* {
+  auto get() -> AVFrame* {
     return frame_;
   }
 
@@ -88,7 +88,7 @@ class av_frame {
    *
    * @throw std::runtime_error 如果分配失败。
    */
-  void allocate_buffer(int align = 32) noexcept;
+  void allocate_buffer(int align = 32)const noexcept;
 
   /**
    * @brief 释放 AVFrame 及其相关资源。
@@ -102,7 +102,7 @@ class av_frame {
    *
    * @throw std::runtime_error 如果无法将 AVFrame 设置为可写。
    */
-  void make_writable() noexcept;
+  void make_writable()const noexcept;
 };
 
 #endif  // FFMPEG_WRAPPER_AV_FRAME_H

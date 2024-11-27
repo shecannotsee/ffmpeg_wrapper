@@ -35,12 +35,12 @@ struct color {
  * @param rgb 输入的 RGB 颜色结构体。
  * @return 转换后的 YUV 颜色结构体。
  */
-constexpr color rgb_to_yuv(color rgb) {
+constexpr color rgb_to_yuv(const color rgb) {
   color yuv{};
   // 需要将 RGB 分量转换为浮点数进行计算
-  float r = rgb.r;
-  float g = rgb.g;
-  float b = rgb.b;
+  const float r = rgb.r;
+  const float g = rgb.g;
+  const float b = rgb.b;
 
   yuv.y = static_cast<uint8_t>(+0.257f * r + 0.504f * g + 0.098f * b + 16);
   yuv.u = static_cast<uint8_t>(-0.148f * r - 0.291f * g + 0.439f * b + 128);
@@ -67,7 +67,7 @@ static color get_color(const std::string& color_name) {
       {"white", rgb_to_yuv({255, 255, 255})},  // YUV{255, 128, 128} RGB {255, 255, 255}
       {"black", rgb_to_yuv({0, 0, 0})},        // YUV{  0, 128, 128} RGB {  0,   0,   0}
   };
-  auto it = color_map.find(color_name);
+  const auto it = color_map.find(color_name);
   return (it != color_map.end()) ? it->second : color{255, 0, 0};  // 默认红色
 }
 
@@ -82,7 +82,7 @@ static color get_color(const std::string& color_name) {
  * @param color_name 边框的颜色名称。
  * @param thickness 边框的厚度，默认为 4。
  */
-void draw(AVFrame* frame, int x1, int y1, int x2, int y2, const std::string& color_name, int thickness = 4);
+void draw(const AVFrame* frame, int x1, int y1, int x2, int y2, const std::string& color_name, int thickness = 4);
 
 /**
  * @brief 在 NV12 格式的帧上绘制矩形边框。
@@ -114,11 +114,11 @@ void draw_rectangle_nv12(
  * @param color_name
  * @param thickness
  */
-void draw_line_nv12(AVFrame* frame, int x1, int y1, int x2, int y2, const std::string& color_name, int thickness = 4);
+void draw_line_nv12(const AVFrame* frame, int x1, int y1, int x2, int y2, const std::string& color_name, int thickness = 4);
 
 void draw_area_nv12(AVFrame* frame, std::vector<point> area, const std::string& color_name, int thickness = 4);
 
-void draw_digit_nv12(AVFrame* frame, int x1, int y1, int digit, const std::string& color_name, int thickness = 1);
+void draw_digit_nv12(AVFrame* frame, int x, int y, int digit, const std::string& color_name, int thickness = 1);
 
 void draw_letter_nv12(AVFrame* frame, int x, int y, char letter, const std::string& color_name, int thickness = 1);
 

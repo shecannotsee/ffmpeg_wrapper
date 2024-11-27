@@ -55,9 +55,8 @@ av_frame& av_frame::operator=(av_frame&& other) noexcept {
   return *this;
 }
 
-void av_frame::allocate_buffer(int align) noexcept {
-  auto ret = av_frame_get_buffer(frame_, align);
-  if (ret < 0) {
+void av_frame::allocate_buffer(const int align) const noexcept {
+  if (const auto ret = av_frame_get_buffer(frame_, align); ret < 0) {
     throw std::runtime_error("Failed to allocate AVFrame->data");
   }
 }
@@ -71,8 +70,8 @@ void av_frame::release() noexcept {
   }
 }
 
-void av_frame::make_writable() noexcept {
-  auto ret = av_frame_make_writable(frame_);
+void av_frame::make_writable() const noexcept {
+  const auto ret = av_frame_make_writable(frame_);
   if (ret < 0) {
     throw std::runtime_error("Failed to make AVFrame writable.");
   }

@@ -59,7 +59,7 @@ class encode {
  public:
   void create_encoder(const AVCodecContext* params = nullptr);
 
-  auto encoding(av_frame frame) -> std::vector<av_packet>;
+  [[nodiscard]] auto encoding(av_frame frame)const -> std::vector<av_packet>;
 };
 
 #endif  // FFMPEG_WRAPPER_ENCODE_H

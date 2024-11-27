@@ -78,13 +78,12 @@ class av_packet {
    */
   av_packet& operator=(av_packet&& other) noexcept;
 
- public:
   /**
    * @brief 获取底层 AVPacket 的指针。
    *
    * @return 指向 AVPacket 结构体的指针。
    */
-  inline auto get() -> AVPacket* {
+  auto get() -> AVPacket* {
     return pkt_;
   }
 };

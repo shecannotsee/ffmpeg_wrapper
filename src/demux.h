@@ -119,7 +119,7 @@ class demux {
    * @throws static_assert 如果模板参数类型不是 `type::video` 或 `type::audio`。
    */
   template <type t>
-  [[nodiscard]] inline auto get_stream() -> AVStream*;
+  [[nodiscard]] auto get_stream() -> AVStream*;
 };
 
 #include "demux_impl.h"

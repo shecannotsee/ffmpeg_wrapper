@@ -44,10 +44,11 @@ TEST(functional, demux_decode_encode_test) {
         std::string file_name = "./" + resource::output_dir + "/" + std::to_string(++count) + ".pgm";
         pgm_save(frame, file_name);
         jpeg_save(frame, file_name);
-        auto en_pkts = encoder.encoding(frame);
+        auto en_pkts                     = encoder.encoding(frame);
+        const std::string save_file_name = "./" + resource::output_dir + "/" + resource::file_name;
         for (auto en_pkt : en_pkts) {
-          test_support::write_to_file("./" + resource::output_dir + "/" + resource::file_name,
-                                      (char *)en_pkt.get()->data, en_pkt.get()->size, true);
+          test_support::write_to_file(save_file_name, reinterpret_cast<char *>(en_pkt.get()->data), en_pkt.get()->size,
+                                      true);
         }
       }
     }

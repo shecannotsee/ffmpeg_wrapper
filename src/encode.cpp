@@ -21,13 +21,13 @@ encode::encode(const std::string& encoder_name) noexcept : encode() {
   }
 }
 
-encode::encode(enum AVCodecID id, bool using_hardware) noexcept : encode() {
+encode::encode(const enum AVCodecID id, const bool using_hardware) noexcept : encode() {
   if (using_hardware) {
     if (id != AV_CODEC_ID_H264 && id != AV_CODEC_ID_HEVC) {
       throw std::runtime_error("Unsupported hard encoding format: " +
                                std::string(avcodec_get_name(id) ? avcodec_get_name(id) : "Unknown codec"));
     }
-    std::string hard_encoder_name = (id == AV_CODEC_ID_H264) ? "h264_nvenc" : "hevc_nvenc";
+    const std::string hard_encoder_name = (id == AV_CODEC_ID_H264) ? "h264_nvenc" : "hevc_nvenc";
     //
     codec_ = avcodec_find_encoder_by_name(hard_encoder_name.c_str());
     if (!codec_) {
@@ -98,16 +98,15 @@ void encode::set_parameters(const AVCodecContext* params) noexcept {
 void encode::create_encoder(const AVCodecContext* params) {
   this->set_parameters(params);
 
-  auto ret = avcodec_open2(ctx_, codec_, nullptr);
-  if (ret < 0) {
+  if (const auto ret = avcodec_open2(ctx_, codec_, nullptr); ret < 0) {
     char err[AV_ERROR_MAX_STRING_SIZE] = {0};
-    std::string warn_msg =
+    const std::string warn_msg =
         "Could not open codec: " + std::string(av_make_error_string(err, AV_ERROR_MAX_STRING_SIZE, ret));
     throw std::runtime_error(warn_msg);
   }
 }
 
-auto encode::encoding(av_frame frame) -> std::vector<av_packet> {
+auto encode::encoding(av_frame frame) const -> std::vector<av_packet> {
   std::vector<av_packet> pkt_list;
 
   auto ret = avcodec_send_frame(ctx_, frame.get());

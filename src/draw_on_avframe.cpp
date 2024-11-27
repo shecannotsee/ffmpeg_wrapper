@@ -6,12 +6,12 @@ extern "C" {
 #include <libavutil/imgutils.h>
 }
 
-void draw(AVFrame* frame, int x1, int y1, int x2, int y2, const std::string& color_name, int thickness) {
-  color draw_color = get_color(color_name);
+void draw(const AVFrame* frame, int x1, int y1, int x2, int y2, const std::string& color_name, const int thickness) {
+  const color draw_color = get_color(color_name);
 
   // YUV420P格式的宽度和高度
-  int width  = frame->width;
-  int height = frame->height;
+  const int width  = frame->width;
+  const int height = frame->height;
 
   // 限制坐标在图像边界内
   x1 = std::max(0, std::min(x1, width - 1));
@@ -24,9 +24,9 @@ void draw(AVFrame* frame, int x1, int y1, int x2, int y2, const std::string& col
   uint8_t* u_plane = frame->data[1];
   uint8_t* v_plane = frame->data[2];
 
-  int y_line_size = frame->linesize[0];
-  int u_line_size = frame->linesize[1];
-  int v_line_size = frame->linesize[2];
+  const int y_line_size = frame->linesize[0];
+  const int u_line_size = frame->linesize[1];
+  const int v_line_size = frame->linesize[2];
 
   // 绘制顶部和底部边框
   for (int x = x1; x <= x2; ++x) {
@@ -69,21 +69,22 @@ void draw(AVFrame* frame, int x1, int y1, int x2, int y2, const std::string& col
   }
 }
 
-void draw_rectangle_nv12(AVFrame* frame, int x1, int y1, int x2, int y2, const std::string& color_name, int thickness) {
-  auto format = (enum AVPixelFormat)frame->format;
+void draw_rectangle_nv12(
+    AVFrame* frame, int x1, int y1, int x2, int y2, const std::string& color_name, const int thickness) {
+  const auto format = static_cast<enum AVPixelFormat>(frame->format);
 
   if (frame->format != AV_PIX_FMT_NV12) {
-    std::string err_msg =
+    const std::string err_msg =
         "Unsupported pixel format: " +
         std::string(av_get_pix_fmt_name(format) ? av_get_pix_fmt_name(format) : "Unknown pixel format");
     throw std::runtime_error(err_msg);
   }
 
-  color draw_color = get_color(color_name);
+  const color draw_color = get_color(color_name);
 
   // NV12格式的宽度和高度
-  int width  = frame->width;
-  int height = frame->height;
+  const int width  = frame->width;
+  const int height = frame->height;
 
   // 限制坐标在图像边界内
   x1 = std::max(0, std::min(x1, width - 1));
@@ -146,7 +147,7 @@ void draw_rectangle_nv12(AVFrame* frame, int x1, int y1, int x2, int y2, const s
 }
 
 // 绘制线段的辅助函数
-void draw_line_nv12(AVFrame* frame, int x1, int y1, int x2, int y2, const std::string& color_name, int thickness) {
+void draw_line_nv12(const AVFrame* frame, int x1, int y1, int x2, int y2, const std::string& color_name, const int thickness) {
   color draw_color = get_color(color_name);
 
   int width  = frame->width;
@@ -196,7 +197,7 @@ void draw_line_nv12(AVFrame* frame, int x1, int y1, int x2, int y2, const std::s
 }
 
 void draw_area_nv12(AVFrame* frame, std::vector<point> area, const std::string& color_name, int thickness) {
-  auto format = (enum AVPixelFormat)frame->format;
+  const auto format = static_cast<enum AVPixelFormat>(frame->format);
 
   if (frame->format != AV_PIX_FMT_NV12) {
     std::string err_msg =
@@ -207,7 +208,7 @@ void draw_area_nv12(AVFrame* frame, std::vector<point> area, const std::string& 
 
   color draw_color = get_color(color_name);
 
-  int num_points = area.size();
+  const int num_points = area.size();
   if (num_points < 3) {
     throw std::runtime_error("A polygon requires at least 3 points");
   }

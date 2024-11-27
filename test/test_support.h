@@ -12,7 +12,6 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
-#include <utility>
 #include <vector>
 
 namespace test_support {
@@ -47,7 +46,7 @@ static bool is_directory_exists(const std::string& dir_path, const std::string& 
  * @return true表示存在，false表示不存在
  */
 static bool is_directory_exists(const std::string& full_path) {
-  struct stat info {};
+  struct stat info{};
   if (stat(full_path.c_str(), &info) != 0) {
     // Cannot access the path (file/directory does not exist)
     return false;
@@ -71,10 +70,10 @@ static void create_dir(const std::string& dir_path) {
   }
   // Mode 0755 gives read, write, and execute permissions to the owner,
   // and read and execute permissions to group and others
-  mode_t mode = 0755;
+  const mode_t mode = 0755;
 
   // Create the directory
-  int result = mkdir(dir_path.c_str(), mode);
+  const int result = mkdir(dir_path.c_str(), mode);
 
   if (result != 0) {
     throw std::runtime_error(std::string("Failed to create directory: " + dir_path));
@@ -99,7 +98,7 @@ static void remove_directory(const std::string& dir_path) {
  * @param size 数据长度
  * @param append 尾部添加或者是清空文件写入
  */
-static void write_to_file(const std::string& fileName, const char* data, size_t size, bool append = false) {
+static void write_to_file(const std::string& fileName, const char* data, const size_t size, const bool append = false) {
   std::ofstream file;
   if (append) {
     file.open(fileName, std::ios::out | std::ios::app);  // 追加模式
@@ -120,8 +119,8 @@ static void write_to_file(const std::string& fileName, const char* data, size_t 
  * @return 以毫秒为单位的时间戳
  */
 static long long get_current_milliseconds_timestamp() {
-  auto now      = std::chrono::system_clock::now();
-  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
+  const auto now      = std::chrono::system_clock::now();
+  const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
   return duration.count();
 }
 
@@ -130,12 +129,12 @@ static long long get_current_milliseconds_timestamp() {
  * @param milliseconds
  * @return format: 2024-05-30 11:12:52.233
  */
-static std::string convert_milliseconds_to_datetime_string(long long milliseconds) {
+static std::string convert_milliseconds_to_datetime_string(const long long milliseconds) {
   // Convert milliseconds to time_t (seconds since epoch)
-  std::time_t seconds = milliseconds / 1000;
+  const std::time_t seconds = milliseconds / 1000;
 
   // Convert time_t to tm structure for local time
-  std::tm* tm_time = std::localtime(&seconds);
+  const std::tm* tm_time = std::localtime(&seconds);
 
   // Create a stringstream to format the date and time
   std::ostringstream oss;
@@ -182,7 +181,7 @@ class timer {
    * @return 输出消耗的时间
    */
   template <typename Duration>
-  long long get_elapsed() const {
+  [[nodiscard]] long long get_elapsed() const {
     Duration elapsed = std::chrono::duration_cast<Duration>(end_time - start_time);
     return elapsed.count();
   }
@@ -205,7 +204,7 @@ static std::vector<char> read_binary_file(const std::string& file_path) {
   }
 
   // 获取文件大小
-  std::streamsize size = file.tellg();
+  const std::streamsize size = file.tellg();
   file.seekg(0, std::ios::beg);
 
   // 创建缓冲区
