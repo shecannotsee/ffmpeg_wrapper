@@ -36,9 +36,12 @@ template <demux::type t>
     } else if constexpr (t == type::av) {
       pkt_type = pkt.get()->stream_index == audio_.stream_index ? type::audio : type::video;
     }
-    static type_av_packet tmp;
-    tmp = type_av_packet({pkt_type, pkt});
-    pkt_list.emplace_back(tmp);  // 拷贝构造
+    // Added when data is not corrupted
+    if (!pkt.get()->flags & AV_PKT_FLAG_CORRUPT) {
+      static type_av_packet tmp;
+      tmp = type_av_packet({pkt_type, pkt});
+      pkt_list.emplace_back(tmp);  // 拷贝构造
+    }
     av_packet_unref(pkt.get());
   }
   return pkt_list;
